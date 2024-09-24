@@ -5,6 +5,7 @@ import { useGetMyBookingQuery } from "../../redux/features/booking/bookingApi";
 import { useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
 import { useNavigate } from "react-router-dom";
+import Review from "../review/Review";
 
 // Define the Booking interface
 export interface Booking {
@@ -31,6 +32,7 @@ const UserBookingManagement: React.FC = () => {
   const [upcomingBookings, setUpcomingBookings] = useState<Booking[]>([]);
   console.log({upcomingBookings})
   const [pastBookings, setPastBookings] = useState<Booking[]>([]);
+  console.log({pastBookings})
 
  
 
@@ -109,18 +111,14 @@ const UserBookingManagement: React.FC = () => {
       title: "User Email",
       dataIndex: "user",
       key: "email",
-      render: (user: { _id: string; email: string }) => {
-        console.log('user.email---',user?.email)
-        {user.email}}
+      render: (user: { _id: string; email: string }) => user.email
     },
     {
       title: "Service",
       dataIndex: "service",
       key: "service",
-      render: (service: { name: string }) => {
-        console.log('service>name',service.name)
-        {service.name}
-      }
+      render: (service: { name: string }) => service.name
+      
     },
     {
       title: "Service Image",
@@ -179,7 +177,7 @@ const UserBookingManagement: React.FC = () => {
     totalPrice: booking.totalPrice,
     paymentStatus: booking.paymentStatus,
   }));
-  console.log({columns})
+  // console.log({columns})
   console.log({dataSource})
 
   return (
@@ -213,6 +211,7 @@ const UserBookingManagement: React.FC = () => {
         loading={isFetching}
         rowKey={(record) => record.key}
       />
+      <Review/>
       
     </div>
   );

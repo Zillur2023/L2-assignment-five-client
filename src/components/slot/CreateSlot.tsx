@@ -31,6 +31,7 @@ const CreateSlot: React.FC = () => {
     reset,
     formState: { errors },
     watch,
+    setValue, // Added setValue to update form values programmatically
   } = useForm<FormValues>({
     defaultValues: {
       service: "",
@@ -41,16 +42,18 @@ const CreateSlot: React.FC = () => {
   });
 
   const startTime = watch("startTime");
-  console.log({startTime})
 
   // Effect to generate end times based on service duration
   useEffect(() => {
     if (startTime && service?.data?.duration) {
+      // Clear the endTime field when startTime changes
+      setValue('endTime', '');
+
       const startMoment = moment(startTime, "HH:mm");
       const duration = service.data.duration;
       const generatedOptions: string[] = [];
       
-      for (let i = 1; i <= 23; i++) { // Example: generate 10 options based on service duration
+      for (let i = 1; i <= 23; i++) {
         const endMoment = startMoment.clone().add(duration * i, "minutes");
         if (endMoment.isBefore(moment("24:00", "HH:mm"))) {
           generatedOptions.push(endMoment.format("HH:mm"));
@@ -59,7 +62,7 @@ const CreateSlot: React.FC = () => {
 
       setEndTimeOptions(generatedOptions);
     }
-  }, [startTime, service]);
+  }, [startTime, service, setValue]);
 
   const onSubmit: SubmitHandler<FormValues> = async (dataInfo) => {
     const toastId = toast.loading("Creating slot...");
@@ -128,24 +131,21 @@ const CreateSlot: React.FC = () => {
 
         {/* Start Time Selection */}
         <Form.Item label="Start Time" validateStatus={errors.startTime ? "error" : ""} help={errors.startTime?.message} required>
-  <Controller
-    name="startTime"
-    control={control}
-    rules={{ required: "Start time is required" }}
-    render={({ field: { onChange, onBlur, ref } }) => (
-      <TimePicker
-        format={'HH:mm'}
-        // value={value ? moment(value, "HH:mm") : null }
-        onChange={(time) => {
-          // Convert time to HH:mm format
-          onChange(time ? time.format("HH:mm") : ""); // Set value in the form
-        }}
-        onBlur={onBlur} // Important for validation
-        ref={ref}
-      />
-    )}
-  />
-</Form.Item>
+          <Controller
+            name="startTime"
+            control={control}
+            rules={{ required: "Start time is required" }}
+            render={({ field }) => (
+              <TimePicker
+              className=" w-full"
+                format={'HH:mm'}
+                onChange={(time) => {
+                  field.onChange(time ? time.format("HH:mm") : "");
+                }}
+              />
+            )}
+          />
+        </Form.Item>
 
         {/* End Time Selection */}
         <Form.Item label="End Time" validateStatus={errors.endTime ? "error" : ""} help={errors.endTime?.message} required>
