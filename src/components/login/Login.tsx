@@ -51,6 +51,7 @@ const Login: React.FC = () => {
         },
         
         error: "Error occurred while logging in",
+        // error: message,
       }
     );
   };

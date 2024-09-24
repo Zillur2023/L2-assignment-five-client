@@ -1,27 +1,62 @@
 import React, { useState } from 'react';
 import { Button, Input, Rate, Modal } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
+import { useCreateReviewMutation, useGetAllReviewQuery } from '../../redux/features/review/reviewApi';
+import { useGetUserQuery } from '../../redux/user/userApi';
+import { toast } from 'sonner';
 
 // Types for the Review
 type Review = {
+  user: string;
   rating: number;
   feedback: string;
 };
 
 const Review: React.FC = () => {
+  // Fetching the user from Redux state
+  const { user } = useSelector((state: RootState) => state.auth);
+  const { data: userData } = useGetUserQuery(user?.email, {
+    skip: !user?.email,
+  });
+  
+  // Fetching all reviews from the API
+  const { data: reviewData } = useGetAllReviewQuery('');
+
+  // Mutation to create a new review
+  const [createReview] = useCreateReviewMutation();
+
+  // State for rating, feedback, and modal visibility
   const [rating, setRating] = useState<number>(0);
   const [feedback, setFeedback] = useState<string>('');
-  const [submittedReviews, setSubmittedReviews] = useState<Review[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const isLoggedIn = true; // Replace with your authentication logic
+
   const navigate = useNavigate();
 
-  const handleSubmitReview = () => {
-    const newReview: Review = { rating, feedback };
-    setSubmittedReviews([newReview, ...submittedReviews.slice(0, 1)]);
-    setIsModalVisible(true); // Show success modal
-    setRating(0);
-    setFeedback('');
+  // Function to handle review submission
+  const handleSubmitReview = async () => {
+    const toastId = toast.loading("Creating review....")
+    if (user && rating > 0 && feedback) {
+      try {
+        // Creating a new review using the API
+       const res =  await createReview({ user:userData?.data?._id, rating, feedback}).unwrap();
+       console.log(res)
+
+         toast.success(res.message, {id: toastId})
+
+        // Show the modal
+        setIsModalVisible(true);
+
+        // Resetting the form inputs
+        setRating(0);
+        setFeedback('');
+      } catch (error:any) {
+        console.error("Error submitting review:", error);
+        toast.error(error?.data?.message, {id:toastId})
+      }
+    
+    }
   };
 
   const handleLoginRedirect = () => {
@@ -36,7 +71,7 @@ const Review: React.FC = () => {
   return (
     <div className="relative p-6 bg-white shadow-lg rounded-lg">
       {/* Overlay for non-logged-in users */}
-      {!isLoggedIn && (
+      {!user && (
         <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center z-10">
           <Button
             type="primary"
@@ -48,7 +83,7 @@ const Review: React.FC = () => {
         </div>
       )}
 
-      {isLoggedIn && (
+      {user && (
         <>
           <h2 className="text-2xl font-semibold mb-4">Leave a Review</h2>
           <div className="mb-4">
@@ -75,10 +110,10 @@ const Review: React.FC = () => {
           </Button>
 
           {/* Post-Submission Display */}
-          {submittedReviews.length > 0 && (
+          {reviewData?.data?.length > 0 && (
             <div className="mt-8">
               <h3 className="text-xl font-semibold">Recent Reviews</h3>
-              {submittedReviews.map((review, index) => (
+              {reviewData?.data?.map((review, index) => (
                 <div key={index} className="mt-4 p-4 border rounded-lg bg-gray-100">
                   <Rate disabled value={review.rating} className="text-yellow-400" />
                   <p className="mt-2 text-gray-700">{review.feedback}</p>

@@ -24,15 +24,11 @@ const UserBookingManagement: React.FC = () => {
   const { data: bookingData, isFetching } = useGetMyBookingQuery(user?.email, {
     skip: !user?.email,
   });
-  console.log({bookingData})
 
   const [countdowns, setCountdowns] = useState<{ [key: string]: string }>({});
- console.log({countdowns})
   // State for upcoming and past bookings
   const [upcomingBookings, setUpcomingBookings] = useState<Booking[]>([]);
-  console.log({upcomingBookings})
   const [pastBookings, setPastBookings] = useState<Booking[]>([]);
-  console.log({pastBookings})
 
  
 
@@ -177,8 +173,6 @@ const UserBookingManagement: React.FC = () => {
     totalPrice: booking.totalPrice,
     paymentStatus: booking.paymentStatus,
   }));
-  // console.log({columns})
-  console.log({dataSource})
 
   return (
     <div>

@@ -21,7 +21,7 @@ const Booking = () => {
   const { state } = location;
   const { service, selectedSlot } = state || {};
   const { user } = useAppSelector((state: RootState) => state.auth);
-  const { data: userInfo } = useGetUserQuery(user?.email, {
+  const { data: userData } = useGetUserQuery(user?.email, {
     skip: !user?.email,
   });
 
@@ -29,23 +29,22 @@ const Booking = () => {
   const { control, setValue } = useForm<FormValues>();
 
   useEffect(() => {
-    if (userInfo?.data) {
-      setValue("name", userInfo.data.name || "");
-      setValue("email", userInfo.data.email || "");
-      setValue("phone", userInfo.data.phone || "");
-      setValue("address", userInfo.data.address || "");
+    if (userData?.data) {
+      setValue("name", userData.data.name || "");
+      setValue("email", userData.data.email || "");
+      setValue("phone", userData.data.phone || "");
+      setValue("address", userData.data.address || "");
     }
-  }, [userInfo, setValue]);
+  }, [userData, setValue]);
 
   const onSubmit = async () => {
     const toastId = toast.loading("Creating booking...");
     const bookingData = {
-      name: userInfo?.data.name,
-      email: userInfo?.data.email,
-      phone: userInfo?.data.phone,
-      address: userInfo?.data.address,
-      bookingInfo: { service: service._id, slot: selectedSlot._id, price: service.price },
+      email:userData?.data?.email,
+      service:service?._id,
+      slot:selectedSlot?._id
     };
+    console.log({bookingData})
 
     try {
       const res = await createBooking(bookingData).unwrap();
