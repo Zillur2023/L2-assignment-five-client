@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Table, Tag } from "antd";
+import type { TableColumnsType, TableProps } from "antd";
 import { useGetAllSlotsQuery, useUpdateSlotMutation } from "../../redux/features/slot/slotApi";
 import { useGetAllServicesQuery } from "../../redux/features/service/serviceApi";
 
@@ -13,11 +14,10 @@ interface SlotData {
 }
 
 const SlotManagement: React.FC = () => {
-  // Example service data
   const { data: slotData, isFetching } = useGetAllSlotsQuery("");
   const { data: serviceData } = useGetAllServicesQuery("");
   const [slots, setSlots] = useState<SlotData[]>([]);
-  const [updateSlot] = useUpdateSlotMutation()
+  const [updateSlot] = useUpdateSlotMutation();
 
   useEffect(() => {
     if (slotData?.data) {
@@ -36,19 +36,19 @@ const SlotManagement: React.FC = () => {
     if (updatedSlot && updatedSlot.isBooked !== "booked") {
       const updatedStatus = updatedSlot.isBooked === "available" ? "canceled" : "available";
       
-      // Update local state first for optimistic UI
+      // Optimistic UI update
       setSlots((prevSlots) =>
         prevSlots.map((slot) =>
           slot._id === slotId ? { ...slot, isBooked: updatedStatus } : slot
         )
       );
 
-      // Call the mutation to update the status in the backend
+      // Backend update
       try {
         await updateSlot({ _id: slotId, isBooked: updatedStatus });
       } catch (error) {
         console.error("Failed to update slot:", error);
-        // Optionally: revert local state in case of an error
+        // Revert state on error
         setSlots((prevSlots) =>
           prevSlots.map((slot) =>
             slot._id === slotId ? { ...slot, isBooked: updatedSlot.isBooked } : slot
@@ -58,63 +58,75 @@ const SlotManagement: React.FC = () => {
     }
   };
 
-  const columns = [
+  const columns: TableColumnsType<SlotData> = [
     {
       title: "Service",
       dataIndex: "service",
       key: "service",
-      width: "30%",
+      filters: serviceData?.data?.map((service: any) => ({
+        text: service.name,
+        value: service._id,
+      })) || [],
+      onFilter: (value, record) => record.service === value,
       render: (service: string) => getServiceName(service),
+      width: "30%",
     },
     {
       title: "Date",
       dataIndex: "date",
       key: "date",
+      sorter: (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+      render: (date: string) => new Date(date).toLocaleDateString(),
       width: "20%",
-      render: (date: string) => new Date(date).toLocaleDateString(), // Format date
     },
-    
     {
       title: "Start Time",
       dataIndex: "startTime",
       key: "startTime",
-      width: "20%",
+      width: "15%",
     },
     {
       title: "End Time",
       dataIndex: "endTime",
       key: "endTime",
-      width: "20%",
+      width: "15%",
     },
     {
       title: "Status",
       dataIndex: "isBooked",
       key: "isBooked",
-      width: "10%",
+      filters: [
+        { text: "Available", value: "available" },
+        { text: "Booked", value: "booked" },
+        { text: "Canceled", value: "canceled" },
+      ],
+      onFilter: (value, record) => record.isBooked === value,
       render: (_: any, record: SlotData) => (
         <Tag
-          color={record.isBooked === "available" ? "green" : "red"}
+          color={record.isBooked === "available" ? "green" : record.isBooked === "canceled" ? "red" : "blue"}
           onClick={record.isBooked !== "booked" ? () => toggleSlotStatus(record._id) : undefined}
           style={{ cursor: record.isBooked !== "booked" ? "pointer" : "not-allowed" }}
         >
           {record.isBooked === "available" ? "Available" : record.isBooked === "canceled" ? "Canceled" : "Booked"}
         </Tag>
       ),
+      width: "20%",
     },
   ];
 
-  const data = slotData?.data?.map((slot: SlotData) => ({
-    key: slot?._id,
-    ...slot,
-  }));
+  const onChange: TableProps<SlotData>['onChange'] = (pagination, filters, sorter, extra) => {
+    console.log('params', pagination, filters, sorter, extra);
+  };
 
   return (
     <>
       <Table
         columns={columns}
-        dataSource={data}
+        dataSource={slots}
         loading={isFetching}
+        onChange={onChange}
         rowKey={(record) => record._id}
+        pagination={{ pageSize: 10 }}
       />
     </>
   );

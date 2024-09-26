@@ -83,7 +83,7 @@ const HomePage = () => {
                         </div>
                       }
                     >
-                      {groupServices(data.data).map(
+                      {groupServices(data?.data?.slice(0,6)).map(
                         (serviceGroup: any[], index: number) => (
                           <div key={index} style={contentStyle}>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
