@@ -1,13 +1,15 @@
+import { Divider } from "antd";
 import { useGetAllWhyChooseUsQuery } from "../../redux/features/whyChooseUs/whyChooseUsApi";
 
 const WhyChooseUs = () => {
   const { data } = useGetAllWhyChooseUsQuery("");
-  console.log({ data });
+  // console.log({ data });
 
   return (
     <div>
       <div>
-        <h3 className=" text-3xl font-bold text-center m-6">Why Choose Us</h3>
+        <h3 className=" text-3xl font-bold text-center mt-10">Why Choose Us</h3>
+        <Divider />
       </div>
       {data?.data?.map((item: any, index: number) => (
         <div

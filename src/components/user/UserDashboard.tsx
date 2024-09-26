@@ -5,7 +5,6 @@ import { useGetMyBookingQuery } from "../../redux/features/booking/bookingApi";
 import { useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
 import { useNavigate } from "react-router-dom";
-import Review from "../review/Review";
 
 // Define the Booking interface
 export interface Booking {
@@ -205,7 +204,7 @@ const UserBookingManagement: React.FC = () => {
         loading={isFetching}
         rowKey={(record) => record.key}
       />
-      <Review/>
+     
       
     </div>
   );

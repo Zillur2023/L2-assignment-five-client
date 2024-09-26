@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { Carousel } from "antd";
+import { Carousel, Divider } from "antd";
 import Banner from "../components/banner/Banner";
 import ServiceDetails from "../components/service/ServiceDetails";
 import { useGetAllServicesQuery } from "../redux/features/service/serviceApi";
 import { RightCircleFilled, LeftCircleFilled } from '@ant-design/icons';
 import WhyChooseUs from "../components/whyChooseUs/WhyChooseUs";
+import Review from "../components/review/Review";
 
 const contentStyle: React.CSSProperties = {
   margin: 0,
@@ -60,9 +61,8 @@ const HomePage = () => {
           "Loading..."
         ) : (
           <div>
-            <h3 className="font-bold text-2xl m-8 text-center text-gray-800 tracking-wide">
-              Services
-            </h3>
+            <h3 className=" text-3xl font-bold text-center mt-10">Service</h3>
+            <Divider />
             <div>
               {data?.data?.length > 0 ? (
                 <div className="relative">
@@ -99,6 +99,7 @@ const HomePage = () => {
         )}
       </>
       <WhyChooseUs/>
+      <Review/>
     </div>
   );
 };
