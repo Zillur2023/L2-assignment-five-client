@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, Input, Rate, Modal } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { useForm, Controller } from 'react-hook-form'; // Import useForm and Controller
+import { useForm, Controller } from 'react-hook-form';
 import { RootState } from '../../redux/store';
 import { useCreateReviewMutation, useGetAllReviewQuery } from '../../redux/features/review/reviewApi';
 import { useGetUserQuery } from '../../redux/user/userApi';
@@ -13,12 +13,16 @@ type ReviewFormInputs = {
   rating: number;
   feedback: string;
 };
+export type Review = {
+  _id:string
+  user:{email: string}
+  rating: number;
+  feedback: string;
+};
 
 const Review: React.FC = () => {
   const { user } = useSelector((state: RootState) => state.auth);
-  const { data: userData } = useGetUserQuery(user?.email, {
-    skip: !user?.email,
-  });
+  const { data: userData } = useGetUserQuery(user?.email, { skip: !user?.email });
   const { data: reviewData } = useGetAllReviewQuery('');
 
   const [createReview] = useCreateReviewMutation();
@@ -32,6 +36,8 @@ const Review: React.FC = () => {
       feedback: '',
     },
   });
+
+  const averageRating = reviewData?.data?.reduce((acc: number, review) => acc + review.rating, 0) / (reviewData?.data?.length || 1) || 0;
 
   // Function to handle review submission
   const onSubmit = async (data: ReviewFormInputs) => {
@@ -65,7 +71,7 @@ const Review: React.FC = () => {
   };
 
   return (
-    <div className="relative p-6 bg-white shadow-lg rounded-lg">
+    <div className="relative p-6 mt-10 rounded-lg">
       {/* Overlay for non-logged-in users */}
       {!user && (
         <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center z-10">
@@ -92,7 +98,7 @@ const Review: React.FC = () => {
                 control={control}
                 rules={{
                   required: 'Rating is required',
-                  validate: value => value > 0 || 'Rating is required',
+                  validate: value => value > 0 || 'Rating must be greater than 0',
                 }}
                 render={({ field: { value } }) => (
                   <>
@@ -102,6 +108,7 @@ const Review: React.FC = () => {
                         trigger('rating'); // Manually trigger validation
                       }}
                       value={value}
+                      allowHalf // Allows half-star ratings
                       className="text-yellow-400"
                     />
                     {errors.rating && <p className="text-red-500">{errors.rating.message}</p>}
@@ -119,7 +126,7 @@ const Review: React.FC = () => {
                 <>
                   <Input.TextArea
                     {...field}
-                    rows={4}
+                    rows={3}
                     placeholder="Write your feedback here..."
                     className="w-full border border-gray-300 rounded-lg p-2"
                   />
@@ -137,15 +144,22 @@ const Review: React.FC = () => {
             >
               Submit Review
             </Button>
-          </form>
+          </form> <br />
 
-          {/* Post-Submission Display */}
+          {/* Average Rating Display */}
+          <div className="mb-4">
+            <h3 className="text-lg font-semibold">Overall Rating: {averageRating.toFixed(1)} / 5</h3>
+            <Rate disabled value={averageRating} allowHalf className="text-yellow-400" />
+          </div>
+
+          {/* Recent Reviews Display */}
           {reviewData?.data?.length > 0 && (
             <div className="mt-8">
               <h3 className="text-xl font-semibold">Recent Reviews</h3>
-              {reviewData?.data?.map((review, index) => (
-                <div key={index} className="mt-4 p-4 border rounded-lg bg-gray-100">
-                  <Rate disabled value={review.rating} className="text-yellow-400" />
+              {reviewData.data.slice(0, 2).map((review:Review) => (
+                <div key={review?._id} className="mt-4 p-4 border rounded-lg bg-gray-100">
+                  <p className="font-semibold">{review?.user?.email}</p> 
+                  <Rate disabled value={review.rating} allowHalf className="text-yellow-400" />
                   <p className="mt-2 text-gray-700">{review.feedback}</p>
                 </div>
               ))}

@@ -8,7 +8,7 @@ const WhyChooseUs = () => {
   return (
     <div>
       <div>
-        <h3 className=" text-3xl font-bold text-center mt-10">Why Choose Us</h3>
+        <h3 className=" text-3xl font-bold text-center mt-10">Why Choose GO Car Wash?</h3>
         <Divider />
       </div>
       {data?.data?.map((item: any, index: number) => (

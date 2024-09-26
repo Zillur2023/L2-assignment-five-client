@@ -7,6 +7,7 @@ const BannerSection = () => {
       <div className="w-full h-full md:w-1/2 mb-4 md:mb-0">
         <img
           src="https://i.ibb.co.com/BgqJYVw/Banner-Image-Template-5ca020fa-f643-4599-afb2-f6df4974d328.png"
+          // src="https://i.ibb.co/fkJfTZH/gcw-150-locations-webbanner-2400-x-600-px.png"
           alt="Banner"
           className="w-full h-96 object-fill rounded"
           // className="w-96 h-96 object-fill rounded-full"

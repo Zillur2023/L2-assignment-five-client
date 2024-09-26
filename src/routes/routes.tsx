@@ -14,6 +14,7 @@ import BookingPage from "../pages/BookingPage";
 import UserBookingManagementPage from "../pages/UserBookingManagementPage";
 import UserManagementPage from "../pages/UserManagementPage";
 import UserDashboardPage from "../pages/UserDashboardPage";
+import AllReviewPage from "../pages/AllReviewPage";
 
 const router = createBrowserRouter([
   {
@@ -67,6 +68,10 @@ const router = createBrowserRouter([
       {
         path: "user-dashboard",
         element: <UserDashboardPage />,
+      },
+      {
+        path: "reviews",
+        element: <AllReviewPage />,
       },
 
       {
