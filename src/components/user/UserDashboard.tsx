@@ -18,44 +18,35 @@ export interface Booking {
 }
 
 const UserBookingManagement: React.FC = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const { user } = useAppSelector((state: RootState) => state.auth);
   const { data: bookingData, isFetching } = useGetMyBookingQuery(user?.email, {
     skip: !user?.email,
   });
 
   const [countdowns, setCountdowns] = useState<{ [key: string]: string }>({});
-  // State for upcoming and past bookings
   const [upcomingBookings, setUpcomingBookings] = useState<Booking[]>([]);
   const [pastBookings, setPastBookings] = useState<Booking[]>([]);
 
- 
-
-  // Update bookings when booking data changes
   useEffect(() => {
     if (bookingData?.data) {
-  
-      const now = moment(); // Current date and time
-  
-      const sortedUpcomingBookings = bookingData.data.filter((booking:Booking) => {
+      const now = moment();
+
+      const sortedUpcomingBookings = bookingData.data.filter((booking: Booking) => {
         const bookingDateTime = moment(`${booking.slot.date} ${booking.slot.startTime}`, "YYYY-MM-DD HH:mm:ss");
-  
-        // Check if the booking is for a future date or a time later than now on the same day
         return bookingDateTime.isAfter(now);
       });
-  
+
       setUpcomingBookings(sortedUpcomingBookings);
-  
-      // Separate past bookings
+
       setPastBookings(
-        bookingData.data.filter((booking:Booking) =>
+        bookingData.data.filter((booking: Booking) =>
           moment(`${booking.slot.date} ${booking.slot.startTime}`, "YYYY-MM-DD HH:mm:ss").isBefore(now)
         )
       );
     }
   }, [bookingData]);
 
-  // Manage countdown updates for upcoming bookings
   useEffect(() => {
     const updateCountdowns = () => {
       const newCountdowns = upcomingBookings.reduce((acc, booking) => {
@@ -71,7 +62,6 @@ const UserBookingManagement: React.FC = () => {
             acc[booking._id] = `${duration.days()}d ${duration.hours()}h ${duration.minutes()}m ${duration.seconds()}s`;
           } else {
             acc[booking._id] = "Expired";
-            // Move expired booking to past bookings
             setPastBookings((prev) => [...prev, booking]);
             setUpcomingBookings((prev) =>
               prev.filter((b) => b._id !== booking._id)
@@ -86,34 +76,41 @@ const UserBookingManagement: React.FC = () => {
 
       setCountdowns(newCountdowns);
     };
-    
 
     if (upcomingBookings.length > 0) {
-      const intervalId = setInterval(updateCountdowns, 1000); // Update every second
-      return () => clearInterval(intervalId); // Clear the interval on unmount
+      const intervalId = setInterval(updateCountdowns, 1000);
+      return () => clearInterval(intervalId);
     }
   }, [upcomingBookings]);
+
   useEffect(() => {
-    // Check if there are upcoming bookings and the countdown exists for the first booking
     if (upcomingBookings.length > 0 && countdowns[upcomingBookings[0]._id]) {
       navigate('/user-dashboard', { state: { countdown: countdowns[upcomingBookings[0]._id] } });
     }
   }, [upcomingBookings, countdowns, navigate]);
 
-  // Table columns for past bookings
-  const columns:any = [
+  const columns: any = [
     {
       title: "User Email",
       dataIndex: "user",
       key: "email",
-      render: (user: { _id: string; email: string }) => user.email
+      filters: bookingData?.data?.map((booking: Booking) => ({
+        text: booking.user.email,
+        value: booking.user.email,
+      })),
+      onFilter: (value: string, record: Booking) => record.user.email.includes(value),
+      render: (user: { _id: string; email: string }) => user.email,
     },
     {
       title: "Service",
       dataIndex: "service",
       key: "service",
-      render: (service: { name: string }) => service.name
-      
+      filters: bookingData?.data?.map((booking: Booking) => ({
+        text: booking.service.name,
+        value: booking.service.name,
+      })),
+      onFilter: (value: string, record: Booking) => record.service.name.includes(value),
+      render: (service: { name: string }) => service.name,
     },
     {
       title: "Service Image",
@@ -128,11 +125,12 @@ const UserBookingManagement: React.FC = () => {
       dataIndex: "slot",
       key: "date",
       render: (slot: { date: string }) => moment(slot.date).format("YYYY-MM-DD"),
+      sorter: (a: Booking, b: Booking) => moment(a.slot.date).unix() - moment(b.slot.date).unix(),
     },
     {
       title: "Booking Time",
       dataIndex: "slot",
-      key: "startTime",
+      key: "time",
       render: (slot: { startTime: string; endTime: string }) => (
         <Tag>
           {slot.startTime} - {slot.endTime}
@@ -144,11 +142,18 @@ const UserBookingManagement: React.FC = () => {
       dataIndex: "totalPrice",
       key: "totalPrice",
       render: (totalPrice: number) => `$${totalPrice.toFixed(2)}`,
+      sorter: (a: Booking, b: Booking) => a.totalPrice - b.totalPrice,
     },
     {
       title: "Payment Status",
       dataIndex: "paymentStatus",
       key: "paymentStatus",
+      filters: [
+        { text: "Paid", value: "Paid" },
+        { text: "Pending", value: "Pending" },
+        { text: "Failed", value: "Failed" },
+      ],
+      onFilter: (value: string, record: Booking) => record.paymentStatus === value,
       render: (paymentStatus: "Pending" | "Paid" | "Failed") => (
         <Tag
           color={
@@ -163,7 +168,6 @@ const UserBookingManagement: React.FC = () => {
     },
   ];
 
-  // Data source for the table
   const dataSource = pastBookings.map((booking) => ({
     key: booking._id,
     user: booking.user,
@@ -175,7 +179,6 @@ const UserBookingManagement: React.FC = () => {
 
   return (
     <div>
-      {/* Upcoming Bookings Section with Countdown */}
       <div className="flex justify-center items-center py-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
           {upcomingBookings.map((booking) => (
@@ -197,15 +200,12 @@ const UserBookingManagement: React.FC = () => {
         </div>
       </div>
 
-      {/* Table for Past Bookings */}
       <Table
         columns={columns}
         dataSource={dataSource}
         loading={isFetching}
         rowKey={(record) => record.key}
       />
-     
-      
     </div>
   );
 };

@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Table, Tag } from "antd";
 import { useGetAllBookingQuery } from "../../redux/features/booking/bookingApi";
+import type { TableProps } from "antd";
 
 // Define the interface for booking data
 interface BookingData {
@@ -15,22 +16,20 @@ interface BookingData {
 
 const UserBookingManagement: React.FC = () => {
   const { data: bookingData, isFetching } = useGetAllBookingQuery('');
-  const [bookings, setBookings] = useState<BookingData[]>([]);
 
-  useEffect(() => {
-    if (bookingData?.data) {
-      setBookings(bookingData.data); // Set booking data when available
-    }
-  }, [bookingData]);
-
-  // Table columns configuration
-  const columns = [
+  // Table columns configuration with types
+  const columns: any = [
     {
       title: "User Email",
       dataIndex: "user",
       key: "email",
       width: "20%",
       render: (user: { _id: string; email: string }) => user.email,
+      filters: Array.from(new Set(bookingData?.data?.map((booking:BookingData) => booking.user.email))).map(email => ({
+        text: email,
+        value: email,
+      })),
+      onFilter: (value:any, record:BookingData) => record.user.email.startsWith(value as string),
     },
     {
       title: "Service",
@@ -38,6 +37,11 @@ const UserBookingManagement: React.FC = () => {
       key: "service",
       width: "15%",
       render: (service: { _id: string; name: string }) => service.name,
+      filters: Array.from(new Set(bookingData?.data?.map(booking => booking.service.name))).map(name => ({
+        text: name,
+        value: name,
+      })),
+      onFilter: (value:any, record:BookingData) => record.service.name.startsWith(value as string),
     },
     {
       title: "Service Image",
@@ -54,6 +58,7 @@ const UserBookingManagement: React.FC = () => {
       key: "date",
       width: "15%",
       render: (slot: { date: Date }) => new Date(slot.date).toLocaleDateString(),
+      sorter: (a:BookingData, b:BookingData) => new Date(a.slot.date).getTime() - new Date(b.slot.date).getTime(),
     },
     {
       title: "Booking Time",
@@ -72,6 +77,7 @@ const UserBookingManagement: React.FC = () => {
       key: "totalPrice",
       width: "10%",
       render: (totalPrice: number) => `$${totalPrice.toFixed(2)}`,
+      sorter: (a:BookingData, b:BookingData) => a.totalPrice - b.totalPrice,
     },
     {
       title: "Payment Status",
@@ -83,24 +89,35 @@ const UserBookingManagement: React.FC = () => {
           {paymentStatus}
         </Tag>
       ),
+      filters: [
+        { text: 'Pending', value: 'Pending' },
+        { text: 'Paid', value: 'Paid' },
+        { text: 'Failed', value: 'Failed' },
+      ],
+      onFilter: (value:any, record:BookingData) => record.paymentStatus === value,
     },
   ];
 
-  const dataSource = bookings.map((booking: BookingData) => ({
+  const dataSource = bookingData?.data?.map((booking: BookingData) => ({
     key: booking._id,
     user: booking.user,
     service: booking.service,
     slot: booking.slot,
     totalPrice: booking.totalPrice,
     paymentStatus: booking.paymentStatus,
-  }));
+  })) || []; // Provide a default empty array if bookingData is undefined
+
+  const onChange: TableProps<BookingData>['onChange'] = (pagination, filters, sorter, extra) => {
+    console.log('Table parameters', pagination, filters, sorter, extra);
+  };
 
   return (
     <Table
       columns={columns}
       dataSource={dataSource}
       loading={isFetching}
-      rowKey={(record) => record.key}
+      onChange={onChange}
+      rowKey={(record) => record._id}
     />
   );
 };
