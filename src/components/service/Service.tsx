@@ -76,7 +76,7 @@ export default function Service() {
 
     {
       id: "_id",
-      name: "Product list",
+      name: "Service list",
       options: data?.data?.map((item: any) => ({
         value: item._id,
         label: item.name,
@@ -229,13 +229,13 @@ export default function Service() {
                           <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                             {data.data.map((service: any) => (
                               <div key={service._id}>
-                                <ServiceDetails service={service} />
+                                <ServiceDetails service={service} page="servicePage" />
                               </div>
                             ))}
                           </div>
                         ) : (
                           <p className="text-center text-gray-500">
-                            No products found.
+                            No service found.
                           </p> // Message when no products
                         )}
                       </div>

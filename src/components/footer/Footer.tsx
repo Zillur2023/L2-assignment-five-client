@@ -3,62 +3,65 @@ import { FacebookFilled, InstagramFilled, TwitterCircleFilled } from '@ant-desig
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-gray-900 text-white py-8 px-4">
-      <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* Logo and About */}
-        <div className="space-y-4">
-          <h2 className="text-2xl font-bold">Go Car Wash</h2>
-          <p className="text-gray-400">
-            Your trusted partner for professional car washing services. We provide eco-friendly and high-quality washes at 150+ locations nationwide.
-          </p>
-        </div>
+    <footer className="bg-gray-900 text-white py-12">
+      <div className="container mx-auto px-4 md:px-8 lg:px-16">
+        <div className="flex flex-col md:flex-row justify-between items-center space-y-8 md:space-y-0">
+          
+          {/* Quick Links Section */}
+          <div className="text-center md:text-left space-y-4">
+            <h3 className="text-lg font-semibold uppercase tracking-wide">Quick Links</h3>
+            <ul className="space-y-2 text-gray-400">
+              <li>
+                <a href="/" className="hover:text-white transition-colors duration-300">Home</a>
+              </li>
+              <li>
+                <a href="/services" className="hover:text-white transition-colors duration-300">Services</a>
+              </li>
+              <li>
+                <a href="/locations" className="hover:text-white transition-colors duration-300">Locations</a>
+              </li>
+              <li>
+                <a href="/contact" className="hover:text-white transition-colors duration-300">Contact Us</a>
+              </li>
+            </ul>
+          </div>
 
-        {/* Navigation Links */}
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold">Quick Links</h3>
-          <ul className="space-y-2 text-gray-400">
-            <li>
-              <a href="/" className="hover:text-white">Home</a>
-            </li>
-            <li>
-              <a href="/services" className="hover:text-white">Services</a>
-            </li>
-            <li>
-              <a href="/locations" className="hover:text-white">Locations</a>
-            </li>
-            <li>
-              <a href="/contact" className="hover:text-white">Contact Us</a>
-            </li>
-          </ul>
-        </div>
+          {/* Logo Section */}
+          <div className="flex flex-col items-center">
+            <img
+              src="https://i.ibb.co/fDQjM72/Logo-White.png" // Replace with Go Car Wash logo URL
+              alt="Go Car Wash Logo"
+              className="w-36 md:w-44"
+            />
+            <div className="flex space-x-6 text-2xl text-gray-400 mt-4">
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 transition-colors duration-300">
+                <FacebookFilled />
+              </a>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-pink-500 transition-colors duration-300">
+                <InstagramFilled />
+              </a>
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors duration-300">
+                <TwitterCircleFilled />
+              </a>
+            </div>
+          </div>
 
-        {/* Contact Info and Social Media */}
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold">Contact Us</h3>
-          <p className="text-gray-400">
-            123 Wash St, Clean City, 12345 <br />
-            Phone: (123) 456-7890 <br />
-            Email: info@gocarwash.com
-          </p>
-
-          {/* Social Media Icons */}
-          <div className="flex space-x-4">
-            <a href="https://facebook.com" target="_blank" rel="noreferrer" className="text-white hover:text-gray-400">
-              <FacebookFilled className="text-2xl" />
-            </a>
-            <a href="https://instagram.com" target="_blank" rel="noreferrer" className="text-white hover:text-gray-400">
-              <InstagramFilled className="text-2xl" />
-            </a>
-            <a href="https://twitter.com" target="_blank" rel="noreferrer" className="text-white hover:text-gray-400">
-              <TwitterCircleFilled className="text-2xl" />
-            </a>
+          {/* Contact Info Section */}
+          <div className="text-center md:text-right space-y-4">
+            <h3 className="text-lg font-semibold uppercase tracking-wide">Contact Us</h3>
+            <p className="text-gray-400">
+              123 Wash St,<br />
+              Clean City, 12345<br />
+              Phone: (123) 456-7890<br />
+              Email: <a href="mailto:info@gocarwash.com" className="hover:text-white">info@gocarwash.com</a>
+            </p>
           </div>
         </div>
-      </div>
 
-      {/* Copyright Section */}
-      <div className="mt-8 border-t border-gray-700 pt-4 text-center text-gray-400">
-        <p>&copy; {new Date().getFullYear()} Go Car Wash. All rights reserved.</p>
+        {/* Divider and Copyright Section */}
+        <div className="mt-12 border-t border-gray-700 pt-6 text-center text-gray-500 text-sm">
+          <p>&copy; {new Date().getFullYear()} Go Car Wash. All rights reserved.</p>
+        </div>
       </div>
     </footer>
   );

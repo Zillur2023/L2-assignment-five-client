@@ -56,13 +56,8 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, page }) => {
     <>
        {/* Conditionally render cards based on the page prop */}
        {page === "homePage" && (        
-       <div>
-         {/* <Carousel arrows infinite={false}> */}
-       
           <div className=" flex items-center justify-center" >
-            <div
-              
-            >
+            <div className=" text-center">
               <img
                 alt={service?.name}
                 src={service?.image}
@@ -70,41 +65,48 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, page }) => {
               /><br />
               <h4 className=" text-xl font-semibold text-center"> {service?.name} </h4> <br />
               <p className=" text-center"> {service?.description} </p>
+              <button
+            onClick={() => setOpen(true)}
+            className="mt-4 px-2 rounded-lg bg-gray-400 py-2 text-base font-semibold text-white hover:bg-gray-500"
+          >
+            View Details
+          </button>
               
             </div>
           </div>
        
-      {/* </Carousel> */}
-       </div>
+      
    )}
 
       {page === "servicePage" && (
         <Card
-          hoverable
-          style={{ width: 240 }}
-          cover={
-            <img
-              alt={service?.name}
-              src={service?.image}
-              style={{ height: 200, width: "100%", objectFit: "contain" }}
-            />
-          }
-        >
-          <Meta
-            title={service?.name}
-            description={`$${service?.price.toFixed(2)}`}
-            // description={service?.description
-            //   .split(" ")
-            //   .slice(0, 15)
-            //   .join(" ") + "..."}
+        hoverable
+        style={{ width: 240 }}
+        cover={
+          <img
+            alt={service?.name}
+            src={service?.image}
+            style={{ height: 200, width: "100%", objectFit: "contain" }}
           />
-          <button
-            onClick={() => setOpen(true)}
-            className="mt-4 w-full rounded-lg bg-indigo-600 py-2 text-base font-semibold text-white hover:bg-indigo-700"
-          >
-            View Details
-          </button>
-        </Card>
+        }
+      >
+        <Meta
+          title={service?.name}
+          description={
+            <>
+              <p className=" text-black font-medium">{`$${service?.price.toFixed(2)}`}</p>
+              <p>{`${service?.description.slice(0, 75)}...`}</p>
+            </>
+          }
+        />
+        <button
+          onClick={() => setOpen(true)}
+          className="mt-4 w-full rounded-lg bg-indigo-600 py-2 text-base font-semibold text-white hover:bg-indigo-700"
+        >
+          View Details
+        </button>
+      </Card>
+      
       )}
 
       {/* Dialog */}
