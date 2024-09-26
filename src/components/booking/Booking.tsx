@@ -8,6 +8,7 @@ import { RootState } from "../../redux/store";
 import { useGetUserQuery } from "../../redux/user/userApi";
 import dayjs from "dayjs";
 import { useEffect } from "react";
+// https://i.ibb.co/kG59Y7v/Banner-Image-Template-5ca020fa-f643-4599-afb2-f6df4974d328.png
 
 type FormValues = {
   name: string;

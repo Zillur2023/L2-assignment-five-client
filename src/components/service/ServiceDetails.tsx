@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Calendar, Card } from "antd";
+import { Calendar, Card, Carousel } from "antd";
 import { useAvailableSlotQuery } from "../../redux/features/slot/slotApi";
 import Meta from "antd/es/card/Meta";
 import { Dialog } from "@headlessui/react";
@@ -24,9 +24,10 @@ type ServiceDetailsProps = {
     price: number;
     image: string;
   } | null;
+  page: string; // page is passed as a string
 };
 
-const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service }) => {
+const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, page }) => {
   const { data: slotData } = useAvailableSlotQuery(service?._id, {
     skip: !service?._id,
   });
@@ -53,29 +54,59 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service }) => {
 
   return (
     <>
-      {/* Service Card */}
-      <Card
-        hoverable
-        style={{ width: 240 }}
-        cover={
-          <img
-            alt={service?.name}
-            src={service?.image}
-            style={{ height: 200, width: "100%", objectFit: "contain" }}
-          />
-        }
-      >
-        <Meta
-          title={service?.name}
-          description={`$${service?.price.toFixed(2)}`}
-        />
-        <button
-          onClick={() => setOpen(true)}
-          className="mt-4 w-full rounded-lg bg-indigo-600 py-2 text-base font-semibold text-white hover:bg-indigo-700"
+       {/* Conditionally render cards based on the page prop */}
+       {page === "homePage" && (        
+       <div>
+         {/* <Carousel arrows infinite={false}> */}
+       
+          <div className=" flex items-center justify-center" >
+            <Card
+              cover={ <img
+                alt={service?.name}
+                src={service?.image}
+                style={{ height: 200, width: "100%", objectFit: "contain" }}
+              />}
+              style={{ width: 320 }}
+            >
+              <Meta
+                title={service?.name}
+                description={service?.description}
+              />
+            </Card>
+          </div>
+       
+      {/* </Carousel> */}
+       </div>
+   )}
+
+      {page === "servicePage" && (
+        <Card
+          hoverable
+          style={{ width: 240 }}
+          cover={
+            <img
+              alt={service?.name}
+              src={service?.image}
+              style={{ height: 200, width: "100%", objectFit: "contain" }}
+            />
+          }
         >
-          View Details
-        </button>
-      </Card>
+          <Meta
+            title={service?.name}
+            description={`$${service?.price.toFixed(2)}`}
+            // description={service?.description
+            //   .split(" ")
+            //   .slice(0, 15)
+            //   .join(" ") + "..."}
+          />
+          <button
+            onClick={() => setOpen(true)}
+            className="mt-4 w-full rounded-lg bg-indigo-600 py-2 text-base font-semibold text-white hover:bg-indigo-700"
+          >
+            View Details
+          </button>
+        </Card>
+      )}
 
       {/* Dialog */}
       <Dialog

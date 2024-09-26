@@ -2,70 +2,66 @@ import React, { useState } from 'react';
 import { Button, Input, Rate, Modal } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { useForm, Controller } from 'react-hook-form'; // Import useForm and Controller
 import { RootState } from '../../redux/store';
 import { useCreateReviewMutation, useGetAllReviewQuery } from '../../redux/features/review/reviewApi';
 import { useGetUserQuery } from '../../redux/user/userApi';
 import { toast } from 'sonner';
 
-// Types for the Review
-type Review = {
-  user: string;
+// Define Review form inputs
+type ReviewFormInputs = {
   rating: number;
   feedback: string;
 };
 
 const Review: React.FC = () => {
-  // Fetching the user from Redux state
   const { user } = useSelector((state: RootState) => state.auth);
   const { data: userData } = useGetUserQuery(user?.email, {
     skip: !user?.email,
   });
-  
-  // Fetching all reviews from the API
   const { data: reviewData } = useGetAllReviewQuery('');
 
-  // Mutation to create a new review
   const [createReview] = useCreateReviewMutation();
-
-  // State for rating, feedback, and modal visibility
-  const [rating, setRating] = useState<number>(0);
-  const [feedback, setFeedback] = useState<string>('');
   const [isModalVisible, setIsModalVisible] = useState(false);
-
   const navigate = useNavigate();
 
+  // Initialize the form using useForm from react-hook-form
+  const { control, handleSubmit, reset, formState: { errors }, setValue, trigger } = useForm<ReviewFormInputs>({
+    defaultValues: {
+      rating: 0,
+      feedback: '',
+    },
+  });
+
   // Function to handle review submission
-  const handleSubmitReview = async () => {
-    const toastId = toast.loading("Creating review....")
-    if (user && rating > 0 && feedback) {
+  const onSubmit = async (data: ReviewFormInputs) => {
+    const toastId = toast.loading("Creating review....");
+
+    if (user && data.rating > 0 && data.feedback) {
       try {
-        // Creating a new review using the API
-       const res =  await createReview({ user:userData?.data?._id, rating, feedback}).unwrap();
-       console.log(res)
+        const res = await createReview({
+          user: userData?.data?._id,
+          rating: data.rating,
+          feedback: data.feedback,
+        }).unwrap();
 
-         toast.success(res.message, {id: toastId})
-
-        // Show the modal
-        setIsModalVisible(true);
-
-        // Resetting the form inputs
-        setRating(0);
-        setFeedback('');
-      } catch (error:any) {
+        toast.success(res.message, { id: toastId });
+        setIsModalVisible(true);  // Show modal on success
+        reset();  // Reset the form inputs
+      } catch (error: any) {
         console.error("Error submitting review:", error);
-        toast.error(error?.data?.message, {id:toastId})
+        toast.error(error?.data?.message, { id: toastId });
       }
-    
     }
   };
 
   const handleLoginRedirect = () => {
-    navigate('/login'); // Redirect to login page
+    navigate('/login');
   };
 
   const redirectToHome = () => {
     setIsModalVisible(false);
-    navigate('/'); // Redirect to home or review section after successful submission
+    navigate('/');
   };
 
   return (
@@ -86,28 +82,62 @@ const Review: React.FC = () => {
       {user && (
         <>
           <h2 className="text-2xl font-semibold mb-4">Leave a Review</h2>
-          <div className="mb-4">
-            <Rate
-              onChange={(value) => setRating(value)}
-              value={rating}
-              className="text-yellow-400"
+
+          {/* Form submission handled by react-hook-form */}
+          <form onSubmit={handleSubmit(onSubmit)}>
+            {/* Rating */}
+            <div className="mb-4">
+              <Controller
+                name="rating"
+                control={control}
+                rules={{
+                  required: 'Rating is required',
+                  validate: value => value > 0 || 'Rating is required',
+                }}
+                render={({ field: { value } }) => (
+                  <>
+                    <Rate
+                      onChange={(val) => {
+                        setValue('rating', val); // Set the value in the form
+                        trigger('rating'); // Manually trigger validation
+                      }}
+                      value={value}
+                      className="text-yellow-400"
+                    />
+                    {errors.rating && <p className="text-red-500">{errors.rating.message}</p>}
+                  </>
+                )}
+              />
+            </div>
+
+            {/* Feedback */}
+            <Controller
+              name="feedback"
+              control={control}
+              rules={{ required: 'Feedback is required' }}
+              render={({ field }) => (
+                <>
+                  <Input.TextArea
+                    {...field}
+                    rows={4}
+                    placeholder="Write your feedback here..."
+                    className="w-full border border-gray-300 rounded-lg p-2"
+                  />
+                  {errors.feedback && <p className="text-red-500">{errors.feedback.message}</p>}
+                </>
+              )}
             />
-          </div>
-          <Input.TextArea
-            rows={4}
-            placeholder="Write your feedback here..."
-            value={feedback}
-            onChange={(e) => setFeedback(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg p-2"
-          />
-          <Button
-            type="primary"
-            className="mt-4 bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded"
-            disabled={rating === 0 || feedback === ''}
-            onClick={handleSubmitReview}
-          >
-            Submit Review
-          </Button>
+
+            {/* Submit button */}
+            <Button
+              type="primary"
+              className="mt-4 bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded"
+              htmlType="submit"
+              disabled={!user}
+            >
+              Submit Review
+            </Button>
+          </form>
 
           {/* Post-Submission Display */}
           {reviewData?.data?.length > 0 && (
