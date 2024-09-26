@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Carousel } from "antd";
 import Banner from "../components/banner/Banner";
 import ServiceDetails from "../components/service/ServiceDetails";
@@ -6,7 +7,7 @@ import { RightCircleFilled, LeftCircleFilled } from '@ant-design/icons';
 
 const contentStyle: React.CSSProperties = {
   margin: 0,
-  minHeight: '300px', // Adjust the minimum height as needed
+  minHeight: '300px',
   color: '#fff',
   lineHeight: '160px',
   textAlign: 'center',
@@ -15,12 +16,36 @@ const contentStyle: React.CSSProperties = {
 
 const HomePage = () => {
   const { data, isLoading } = useGetAllServicesQuery("");
+  const [chunkSize, setChunkSize] = useState(3); // Default chunk size
 
-  // Group services into chunks of 3
+  // Detect screen size and update chunk size accordingly
+  useEffect(() => {
+    const handleResize = () => {
+      const screenWidth = window.innerWidth;
+      if (screenWidth >= 768 && screenWidth < 1024) {
+        setChunkSize(2); // Medium devices (md)
+      } else if (screenWidth >= 1024) {
+        setChunkSize(3); // Larger devices (lg and above)
+      } else {
+        setChunkSize(1); // Small devices (sm)
+      }
+    };
+
+    // Initial check
+    handleResize();
+
+    // Listen for window resize events
+    window.addEventListener("resize", handleResize);
+
+    // Cleanup the event listener on component unmount
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Group services based on the current chunk size
   const groupServices = (services: any[]) => {
     const groups = [];
-    for (let i = 0; i < services.length; i += 3) {
-      groups.push(services.slice(i, i + 3));
+    for (let i = 0; i < services.length; i += chunkSize) {
+      groups.push(services.slice(i, i + chunkSize));
     }
     return groups;
   };
@@ -39,18 +64,18 @@ const HomePage = () => {
             </h3>
             <div>
               {data?.data?.length > 0 ? (
-                <div>
+                <div className="relative">
                   <Carousel
                     arrows={true}
                     infinite={false}
                     prevArrow={
                       <div className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-red-500 rounded-full p-2">
-                        <LeftCircleFilled className=" text-gray-500 text-3xl" />
+                        <LeftCircleFilled className="text-gray-500 text-3xl" />
                       </div>
                     }
                     nextArrow={
                       <div className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-red-500 rounded-full p-2">
-                        <RightCircleFilled className="text-gray-500 text-2xl" />
+                        <RightCircleFilled className="text-gray-500 text-3xl" />
                       </div>
                     }
                   >
