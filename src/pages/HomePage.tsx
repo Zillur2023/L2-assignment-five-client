@@ -6,6 +6,7 @@ import { useGetAllServicesQuery } from "../redux/features/service/serviceApi";
 import { RightCircleFilled, LeftCircleFilled } from "@ant-design/icons";
 import WhyChooseUs from "../components/whyChooseUs/WhyChooseUs";
 import Review from "../components/review/Review";
+import Footer from "../components/footer/Footer";
 
 const contentStyle: React.CSSProperties = {
   margin: 0,
@@ -148,6 +149,9 @@ const HomePage = () => {
       </section>
       <section>
         <Review />
+      </section>
+      <section>
+        <Footer/>
       </section>
     </div>
   );
