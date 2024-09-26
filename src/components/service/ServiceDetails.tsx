@@ -60,19 +60,18 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, page }) => {
          {/* <Carousel arrows infinite={false}> */}
        
           <div className=" flex items-center justify-center" >
-            <Card
-              cover={ <img
+            <div
+              
+            >
+              <img
                 alt={service?.name}
                 src={service?.image}
                 style={{ height: 200, width: "100%", objectFit: "contain" }}
-              />}
-              style={{ width: 320 }}
-            >
-              <Meta
-                title={service?.name}
-                description={service?.description}
-              />
-            </Card>
+              /><br />
+              <h4 className=" text-xl font-semibold text-center"> {service?.name} </h4> <br />
+              <p className=" text-center"> {service?.description} </p>
+              
+            </div>
           </div>
        
       {/* </Carousel> */}

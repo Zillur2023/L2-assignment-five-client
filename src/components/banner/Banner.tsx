@@ -1,14 +1,15 @@
 import React from 'react';
 
-const Banner = () => {
+const BannerSection = () => {
   return (
     <div className="flex flex-col md:flex-row items-center justify-between bg-gray-100 p-8">
       {/* Left Side - Image */}
-      <div className="w-full md:w-1/2 mb-4 md:mb-0">
+      <div className="w-full h-full md:w-1/2 mb-4 md:mb-0">
         <img
-          src="https://i.ibb.co/kG59Y7v/Banner-Image-Template-5ca020fa-f643-4599-afb2-f6df4974d328.png"
+          src="https://i.ibb.co.com/BgqJYVw/Banner-Image-Template-5ca020fa-f643-4599-afb2-f6df4974d328.png"
           alt="Banner"
-          className="w-full h-auto object-cover rounded-md"
+          className="w-full h-96 object-fill rounded"
+          // className="w-96 h-96 object-fill rounded-full"
         />
       </div>
 
@@ -29,4 +30,4 @@ const Banner = () => {
   );
 };
 
-export default Banner;
+export default BannerSection;

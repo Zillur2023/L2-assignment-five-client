@@ -4,6 +4,7 @@ import Banner from "../components/banner/Banner";
 import ServiceDetails from "../components/service/ServiceDetails";
 import { useGetAllServicesQuery } from "../redux/features/service/serviceApi";
 import { RightCircleFilled, LeftCircleFilled } from '@ant-design/icons';
+import WhyChooseUs from "../components/whyChooseUs/WhyChooseUs";
 
 const contentStyle: React.CSSProperties = {
   margin: 0,
@@ -97,6 +98,7 @@ const HomePage = () => {
           </div>
         )}
       </>
+      <WhyChooseUs/>
     </div>
   );
 };
