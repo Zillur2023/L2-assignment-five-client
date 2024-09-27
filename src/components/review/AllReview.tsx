@@ -10,7 +10,7 @@ const AllReview: React.FC = () => {
 
   return (
     <div className="p-6 mt-10 rounded-lg">
-      <h2 className="text-2xl font-semibold mb-4">All Reviews</h2>
+      <h2 className="text-xl sm:text-xl md:text-2xl font-semibold mb-4">All Reviews</h2>
       {reviewData?.data?.length ? (
         reviewData.data.map((review: Review ) => (
           <div key={review._id} className="mb-4 p-4 border rounded-lg bg-gray-100">

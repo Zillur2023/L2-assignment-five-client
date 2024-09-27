@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Button, Input, Rate, Modal } from 'antd';
+import React from 'react';
+import { Button, Input, Rate, } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useForm, Controller } from 'react-hook-form';
@@ -26,7 +26,6 @@ const Review: React.FC = () => {
   const { data: reviewData } = useGetAllReviewQuery('');
 
   const [createReview] = useCreateReviewMutation();
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const navigate = useNavigate();
 
   // Initialize the form using useForm from react-hook-form
@@ -37,7 +36,7 @@ const Review: React.FC = () => {
     },
   });
 
-  const averageRating = reviewData?.data?.reduce((acc: number, review) => acc + review.rating, 0) / (reviewData?.data?.length || 1) || 0;
+  const averageRating = reviewData?.data?.reduce((acc: number, review:any) => acc + review.rating, 0) / (reviewData?.data?.length || 1) || 0;
 
   // Function to handle review submission
   const onSubmit = async (data: ReviewFormInputs) => {
@@ -52,7 +51,6 @@ const Review: React.FC = () => {
         }).unwrap();
 
         toast.success(res.message, { id: toastId });
-        setIsModalVisible(true);  // Show modal on success
         reset();  // Reset the form inputs
       } catch (error: any) {
         console.error("Error submitting review:", error);
@@ -62,16 +60,13 @@ const Review: React.FC = () => {
   };
 
   const handleLoginRedirect = () => {
-    navigate('/login');
+    navigate('/auth/login');
   };
 
-  const redirectToHome = () => {
-    setIsModalVisible(false);
-    navigate('/');
-  };
+ 
 
   return (
-    <div className="relative p-6 mt-10 rounded-lg">
+    <div className="relative p-6 my-10 rounded-lg">
       {/* Overlay for non-logged-in users */}
       {!user && (
         <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center z-10">
@@ -175,16 +170,7 @@ const Review: React.FC = () => {
         </>
       )}
 
-      {/* Modal after submission */}
-      <Modal
-        title="Review Submitted"
-        visible={isModalVisible}
-        onOk={redirectToHome}
-        onCancel={() => setIsModalVisible(false)}
-        okText="Go to Home"
-      >
-        <p>Thank you for your review! You will now be redirected.</p>
-      </Modal>
+    
     </div>
   );
 };
