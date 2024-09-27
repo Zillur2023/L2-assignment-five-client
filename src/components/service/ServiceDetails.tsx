@@ -63,7 +63,7 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, page }) => {
                 src={service?.image}
                 style={{ height: 200, width: "100%", objectFit: "contain" }}
               /><br />
-              <h4 className=" text-xl font-semibold text-center"> {service?.name} </h4> <br />
+              <h4 className=" text-xl sm:text-xl md:text-2xl font-semibold text-center"> {service?.name} </h4> <br />
               <p className=" text-center"> {service?.description} </p>
               <button
             onClick={() => setOpen(true)}

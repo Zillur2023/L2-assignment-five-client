@@ -6,9 +6,19 @@ const WhyChooseUs = () => {
   // console.log({ data });
 
   return (
-    <div>
+    <div className=" my-10">
       <div>
-        <h3 className=" text-3xl font-bold text-center mt-10">Why Choose GO Car Wash?</h3>
+      <div className="flex flex-col-reverse md:flex-row items-center justify-center mt-10">
+  <h3 className="text-3xl sm:text-3xl md:text-4xl font-semibold text-center mt-5 md:mt-0 md:mr-6">
+    Why Choose GO Car Wash?
+  </h3>
+  <img
+    src="https://i.ibb.co/wCxPXc4/gocarwashcar.png"
+    alt="Banner"
+    className="w-3/4 sm:w-1/2 md:w-1/3 lg:w-1/4"
+  />
+</div>
+
         <Divider />
       </div>
       {data?.data?.map((item: any, index: number) => (
@@ -27,7 +37,7 @@ const WhyChooseUs = () => {
 
           {/* Content section */}
           <div className="w-full md:w-1/2 flex flex-col text-center md:text-left md:ml-6">
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">
+            <h1 className="text-xl sm:text-xl md:text-2xl font-semibold">
               {item?.title}
             </h1>
             <p className="text-gray-600 mt-2">{item?.description}</p>

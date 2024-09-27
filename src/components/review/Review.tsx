@@ -87,7 +87,7 @@ const Review: React.FC = () => {
 
       {user && (
         <>
-          <h2 className="text-2xl font-semibold mb-4">Leave a Review</h2>
+          <h2 className="text-3xl sm:text-3xl md:text-4xl font-semibold mb-4">Leave a Review</h2>
 
           {/* Form submission handled by react-hook-form */}
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -148,14 +148,14 @@ const Review: React.FC = () => {
 
           {/* Average Rating Display */}
           <div className="mb-4">
-            <h3 className="text-lg font-semibold">Overall Rating: {averageRating.toFixed(1)} / 5</h3>
+            <h3 className="text-xl sm:text-xl md:text-2xl font-semibold">Overall Rating: {averageRating.toFixed(1)} / 5</h3>
             <Rate disabled value={averageRating} allowHalf className="text-yellow-400" />
           </div>
 
           {/* Recent Reviews Display */}
           {reviewData?.data?.length > 0 && (
             <div className="mt-8">
-              <h3 className="text-xl font-semibold">Recent Reviews</h3>
+              <h3 className="text-xl sm:text-xl md:text-2xl font-semibold">Recent Reviews</h3>
               {reviewData.data.slice(0, 2).map((review:Review) => (
                 <div key={review?._id} className="mt-4 p-4 border rounded-lg bg-gray-100">
                   <p className="font-semibold">{review?.user?.email}</p> 

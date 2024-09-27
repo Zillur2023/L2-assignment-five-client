@@ -64,7 +64,7 @@ const HomePage = () => {
             "Loading..."
           ) : (
             <div>
-              <h3 className=" text-3xl font-bold text-center mt-10">Service</h3>
+              <h3 className=" text-3xl sm:text-3xl md:text-4xl font-semibold text-center mt-10">Service</h3>
               <Divider />
               <div>
                 {data?.data?.length > 0 ? (
@@ -125,12 +125,12 @@ const HomePage = () => {
         >
           {/* Content section */}
           <div className="w-full md:w-1/2 flex flex-col text-center md:text-left md:ml-6">
-            <h1 className="text-xl sm:text-xl md:text-3xl font-bold text-center">
+            <h1 className="text-3xl sm:text-3xl md:text-4xl font-semibold text-center">
               About Us
             </h1>
             <br />
-            <h1 className="text-xl sm:text-xl md:text-xl font-semibold text-center">
-              YOUR LOCAL CAR WASH EXPERTS
+            <h1 className="text-xl sm:text-xl md:text-2xl font-semibold text-center">
+              Your Local Car Wash Experts
             </h1>
             <p className="text-gray-600 mt-2 text-center">
               Welcome to GO Car Wash—where we're crazy about cleanliness and
