@@ -125,7 +125,7 @@ function MobileMenu({ navigation }: { navigation: any[] }) {
 export default function Navbar() {
   const dispatch = useAppDispatch();
   const { user,  } = useAppSelector((state: RootState) => state.auth);
-  const navigation = !user ? publicNavigation : user.role === "admin" ? adminNavigation : userNavigation;
+  const navigation = !user ? publicNavigation : user.role === "ADMIN" ? adminNavigation : userNavigation;
   const items = user ? loginUserInfo(dispatch) : needUserInfo;
 
   return (

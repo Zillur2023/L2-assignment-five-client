@@ -33,6 +33,7 @@ type ServiceDetailsProps = {
 
 const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, page }) => {
   const { user } = useAppSelector((state: RootState) => state.auth);
+  console.log({user})
   const location = useLocation();
   const { data: slotData } = useAvailableSlotQuery(service?._id, {
     skip: !service?._id,
@@ -241,14 +242,14 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, page }) => {
               <div className=" my-5">
                 {/* Book Button */}
                 {selectedSlot ? (
-                  user?.role === "user" ? (
+                  user?.role === "USER" ? (
                     <Link to="/booking" state={{ service, selectedSlot }}>
                       <button className="w-full bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
                         Book This Service
                       </button>
                     </Link>
                   ) : (
-                    <Link to="/auth/login" state={{ from: location }}>
+                    <Link to="/login" state={{ from: location }}>
                       <button className="w-full bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
                         Login to Book This Service
                       </button>

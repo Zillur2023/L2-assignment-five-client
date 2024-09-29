@@ -35,15 +35,15 @@ const Register: React.FC = () => {
     const result = await createUser(formData).unwrap();
     if (result.success) {
       toast.success(result.message);
-      navigate('/auth/login');
+      navigate('/login');
     } else {
       toast.warning(result?.message);
-      navigate('/auth/login');
+      navigate('/login');
     }
   };
 
   const goToLogin = () => {
-    navigate('/auth/login');
+    navigate('/login');
   };
 
   return (

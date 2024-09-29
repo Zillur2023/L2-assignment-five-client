@@ -60,7 +60,7 @@ const Review: React.FC = () => {
   };
 
   const handleLoginRedirect = () => {
-    navigate('/auth/login');
+    navigate('/login');
   };
 
  

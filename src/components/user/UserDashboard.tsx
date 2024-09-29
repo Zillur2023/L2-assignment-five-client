@@ -2,10 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Table, Card, Tag } from "antd";
 import moment from "moment";
 import { useGetMyBookingQuery } from "../../redux/features/booking/bookingApi";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import {  useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
-import { useLocation, useNavigate } from "react-router-dom";
-import { setCountdown } from "../../redux/features/auth/authSlice";
 
 const { Meta } = Card;
 
@@ -173,7 +171,7 @@ const UserBookingManagement: React.FC = () => {
         {upcomingBookings.map((booking) => (
   <Card
     key={booking._id}
-    style={{ width: 270 }}
+    style={{ width: 280 }}
     hoverable
     cover={
       <img
@@ -195,11 +193,15 @@ const UserBookingManagement: React.FC = () => {
             Price: <span className="text-green-600">{`$${booking.service.price}`}</span>
           </p>
           <p className="text-gray-800 font-medium">
-            Slot:{" "}
+            Booking:{" "}
             <span className="text-green-600">
-              {moment(booking.slot.date).format("YYYY-MM-DD")} (
-              {booking.slot.startTime} - {booking.slot.endTime})
+              {moment(booking.slot.date).format("YYYY-MM-DD")}({booking.slot.startTime} - {booking.slot.endTime})
             </span>
+            {/* <Tag>
+            {moment(booking.slot.date).format("YY-MM-DD")} - 
+            ( {booking.slot.startTime} - {booking.slot.endTime} )
+        </Tag> */}
+
           </p>
             <p className="text-gray-800 font-medium flex items-center">
               Time Remaining:{" "}

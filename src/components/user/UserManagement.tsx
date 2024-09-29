@@ -33,7 +33,7 @@ const UserManagement: React.FC = () => {
     const updatedUser = filteredUsers.find((user) => user._id === userId);
 
     if (updatedUser) {
-      const newRole = updatedUser.role === "user" ? "admin" : "user";
+      const newRole = updatedUser.role === "USER" ? "ADMIN" : "USER";
 
       try {
         // Update user role in the backend
@@ -93,11 +93,11 @@ const UserManagement: React.FC = () => {
       dataIndex: "role",
       render: (_: any, record: UserData) => (
         <Tag
-          color={record.role === "admin" ? "gold" : "blue"}
+          color={record.role === "ADMIN" ? "gold" : "blue"}
           onClick={() => toggleUserRole(record._id)} // Toggle role on click
           style={{ cursor: "pointer" }} // Pointer cursor to indicate interactivity
         >
-          {record.role === "admin" ? "Admin" : "User"}
+          {record.role === "ADMIN" ? "Admin" : "User"}
         </Tag>
       ),
       width: "10%",

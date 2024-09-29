@@ -35,22 +35,42 @@ const router = createBrowserRouter([
       {
         path: "add-service",
         element: (
-          <ProtectedRoute>
+          <ProtectedRoute role="ADMIN">
             <AddServicePage />
           </ProtectedRoute>
         ),
       },
       {
         path: "service-management",
-        element: <ServiceManagementPage />,
+        element: (
+          <ProtectedRoute role="ADMIN">
+            <ServiceManagementPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "create-slot",
-        element: <CreateSlotPage />,
+        element: (
+          <ProtectedRoute role="ADMIN">
+            <CreateSlotPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "slot-management",
-        element: <SlotManagementPage />,
+        element: (
+          <ProtectedRoute role="ADMIN">
+            <SlotManagementPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "user-management",
+        element: (
+          <ProtectedRoute role="ADMIN">
+            <UserManagementPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "booking",
@@ -58,27 +78,30 @@ const router = createBrowserRouter([
       },
       {
         path: "user-booking",
-        element: <UserBookingManagementPage />,
-      },
-      {
-        path: "user-management",
-        element: <UserManagementPage />,
+        element: (
+          <ProtectedRoute role="USER">
+            <UserBookingManagementPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "user-dashboard",
-        element: <UserDashboardPage />,
+        element: (
+          <ProtectedRoute role="USER">
+            <UserDashboardPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "reviews",
         element: <AllReviewPage />,
       },
-
       {
-        path: "auth/login",
+        path: "/login",
         element: <Login />,
       },
       {
-        path: "auth/register",
+        path: "/register",
         element: <Register />,
       },
       {
@@ -88,19 +111,6 @@ const router = createBrowserRouter([
       {
         path: "*",
         element: <NotFoundPage />,
-      },
-    ],
-  },
-  {
-    path: "auth",
-    children: [
-      {
-        path: "login",
-        element: <Login />,
-      },
-      {
-        path: "register",
-        element: <Register />,
       },
     ],
   },

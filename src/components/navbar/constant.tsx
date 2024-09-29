@@ -17,12 +17,12 @@ export const publicNavigation = [
   },
   {
     name: "Register",
-    link: "/auth/register",
+    link: "/register",
     current: false,
   },
   {
     name: "Login",
-    link: "/auth/login",
+    link: "/login",
     current: false,
   },
 ]
@@ -143,7 +143,7 @@ export const loginUserInfo = (dispatch:Dispatch) => [
     {
       key: "1",
       label: (
-        <Link to="/auth/login" className="block px-4 py-2 text-sm text-gray-700">
+        <Link to="/login" className="block px-4 py-2 text-sm text-gray-700">
           Login
         </Link>
       ),
@@ -151,7 +151,7 @@ export const loginUserInfo = (dispatch:Dispatch) => [
     {
       key: "2",
       label: (
-        <Link to="/auth/register" className="block px-4 py-2 text-sm text-gray-700">
+        <Link to="/register" className="block px-4 py-2 text-sm text-gray-700">
           Register
         </Link>
       ),

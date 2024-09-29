@@ -1,23 +1,34 @@
 import React, { ReactNode } from 'react';
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 import { RootState } from '../../redux/store';
-import { useAppSelector } from '../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { jwtDecode } from 'jwt-decode';
+import { logout } from '../../redux/features/auth/authSlice';
 
-
-interface ProtectedRouteProps {
+type ProtectedRouteProps = {
   children: ReactNode;
-}
+  role: string | undefined;
+};
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, role }) => {
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const location = useLocation();
-  const { user } = useAppSelector((state: RootState) => state.auth);
 
-  if (!user) {
-    // If no user, redirect to login
-    return <Navigate to="/auth/login" state={{ from: location }} replace />;
+  const { token } = useAppSelector((state: RootState) => state.auth);
+
+  let user:any;
+
+  if (token) {
+    user = jwtDecode(token);
   }
 
-  // If user is authenticated, render children
+  const dispatch = useAppDispatch();
+
+  if (role !== user?.role) {
+    dispatch(logout());
+    return <Navigate to="/login"  replace={true} />;
+  }
+  if (!token) {
+    return <Navigate to="/login" replace={true} />;
+  }
   return (
     <div className="">
       <Outlet /> {/* This is useful if you want nested routes to render */}

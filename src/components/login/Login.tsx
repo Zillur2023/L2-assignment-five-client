@@ -53,7 +53,7 @@ const Login: React.FC = () => {
   
 
   const goToRegister = () => {
-    navigate("/auth/register");
+    navigate("/register");
   };
 
   return (

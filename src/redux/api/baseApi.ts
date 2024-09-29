@@ -37,9 +37,9 @@ const baseQueryWithRefreshToken: BaseQueryFn<
   // if (result?.error?.status === 404) {
   //   toast.error('User not found')
   // }
-  if (result?.error?.status === 403) {
-    toast.error('Password not match')
-  }
+  // if (result?.error?.status === 403) {
+  //   toast.error('Password not match')
+  // }
 
   if (result?.error?.status === 401) {
     //* Send Refresh
