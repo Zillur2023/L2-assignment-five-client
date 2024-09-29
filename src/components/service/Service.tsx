@@ -87,6 +87,7 @@ export default function Service() {
         checked: false,
       })),
     },
+  
   ];
 
   const handleSortChange = (

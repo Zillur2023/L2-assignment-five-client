@@ -76,7 +76,7 @@ const AddService: React.FC = () => {
           createService(serviceData).unwrap(),
           {
             loading: "Loading...",
-            success: () => `${dataInfo.name} has been added`,
+            success: () => `${dataInfo.name} create  successfully`,
             error: "Error occurred while adding service",
           }
         );
