@@ -50,14 +50,15 @@ const CreateSlot: React.FC = () => {
       setValue('endTime', '');
 
       const startMoment = moment(startTime, "HH:mm");
-      const duration = service.data.duration;
+      const duration = service.data.duration; // duration in minutes
       const generatedOptions: string[] = [];
-      
-      for (let i = 1; i <= 23; i++) {
-        const endMoment = startMoment.clone().add(duration * i, "minutes");
-        if (endMoment.isBefore(moment("24:00", "HH:mm"))) {
-          generatedOptions.push(endMoment.format("HH:mm"));
-        }
+
+      let nextTime = startMoment.clone().add(duration, "minutes");
+
+      // Generate end times until the end of the day (24:00)
+      while (nextTime.isBefore(moment("24:00", "HH:mm"))) {
+        generatedOptions.push(nextTime.format("HH:mm"));
+        nextTime = nextTime.clone().add(duration, "minutes");
       }
 
       setEndTimeOptions(generatedOptions);
@@ -75,10 +76,10 @@ const CreateSlot: React.FC = () => {
     
     try {
       const res = await createSlot(serviceData).unwrap();
-      if (res.success) {
+      if (res) {
         toast.success(res?.message, { id: toastId });
         reset();
-        navigate('/');
+        // navigate('/');
       } else {
         toast.error(res.message, { id: toastId });
       }
@@ -137,7 +138,7 @@ const CreateSlot: React.FC = () => {
             rules={{ required: "Start time is required" }}
             render={({ field }) => (
               <TimePicker
-              className=" w-full"
+                className=" w-full"
                 format={'HH:mm'}
                 onChange={(time) => {
                   field.onChange(time ? time.format("HH:mm") : "");

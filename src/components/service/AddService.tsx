@@ -72,18 +72,23 @@ const AddService: React.FC = () => {
           image: imageUrl,
         };
 
-        toast.promise(
-          createService(serviceData).unwrap(),
-          {
-            loading: "Loading...",
-            success: () => `${dataInfo.name} create  successfully`,
-            error: "Error occurred while adding service",
-          }
-        );
+        const toastId = toast.loading("Service creating...")
+       try {
+        const res = await createService(serviceData).unwrap()
 
-        reset();
-        setFileList([]);
-        clearErrors("image");
+          if(res) {
+            toast.success(res?.message, {id: toastId})
+            reset();
+            setFileList([]);
+            clearErrors("image");
+          }
+        
+       } catch (error:any) {
+        toast.error(error?.data?.message, {id: toastId})
+       }
+
+       
+       
       } else {
         throw new Error("Image upload failed");
       }
