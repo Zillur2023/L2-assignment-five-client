@@ -8,34 +8,39 @@ const userApi = baseApi.injectEndpoints({
         method: "POST",
         body: userInfo,
       }),
+      invalidatesTags: ["User"]
     }),
     getAllUser: builder.query({
       query: () => ({
         url: `/user/allUser`,
         method: "GET",
       }),
+      providesTags: ["User"]
     }),
     getUser: builder.query({
       query: (email) => ({
         url: `/user/${email}`,
         method: "GET",
       }),
+      providesTags: ["User"]
     }),
     getUserById: builder.query({
       query: () => ({
         url: "/",
         method: "GET",
       }),
+      providesTags: ["User"]
     }),
-    updateUser: builder.mutation({
+    updateProfile: builder.mutation({
       query: (user) => ({
         url: `/user/update/${user._id}`,
         method: 'PUT',
         body: user,
       }),
+      invalidatesTags: ["User"]
     }),
   }),
 });
 
-export const { useCreateUserMutation, useGetAllUserQuery, useGetUserQuery, useGetUserByIdQuery, useUpdateUserMutation } =
+export const { useCreateUserMutation, useGetAllUserQuery, useGetUserQuery, useGetUserByIdQuery, useUpdateProfileMutation } =
   userApi;

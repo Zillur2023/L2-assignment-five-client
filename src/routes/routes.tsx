@@ -15,6 +15,7 @@ import UserBookingManagementPage from "../pages/UserBookingManagementPage";
 import UserManagementPage from "../pages/UserManagementPage";
 import UserDashboardPage from "../pages/UserDashboardPage";
 import AllReviewPage from "../pages/AllReviewPage";
+import Profile from "../components/user/Profile";
 
 const router = createBrowserRouter([
   {
@@ -27,7 +28,7 @@ const router = createBrowserRouter([
       },
 
       {
-        path: "services",
+        path: "all-service",
         element: <ServicePage />,
       },
 
@@ -45,9 +46,7 @@ const router = createBrowserRouter([
       },
       {
         path: "create-slot",
-        element: (
-            <CreateSlotPage />
-        ),
+        element: <CreateSlotPage />,
       },
       {
         path: "slot-management",
@@ -55,7 +54,7 @@ const router = createBrowserRouter([
       },
       {
         path: "booking",
-        element: <BookingPage/>
+        element: <BookingPage />,
       },
       {
         path: "user-booking",
@@ -81,6 +80,10 @@ const router = createBrowserRouter([
       {
         path: "auth/register",
         element: <Register />,
+      },
+      {
+        path: "profile",
+        element: <Profile />,
       },
       {
         path: "*",

@@ -2,17 +2,59 @@ import { Link } from "react-router-dom";
 import { logout } from "../../redux/features/auth/authSlice";
 import { Dispatch } from "@reduxjs/toolkit";
 
-export const navigation = [
-  // {
-  //   name: "Dashboard",
-  //   link: "/dashboard",
-  //   current: false,
-  // },
+
+
+export const publicNavigation = [
+  {
+    name: "Home",
+    link: "/",
+    current: false,
+  },
+  {
+    name: "Service",
+    link: "/all-service",
+    current: false,
+  },
+  {
+    name: "Register",
+    link: "/auth/register",
+    current: false,
+  },
+  {
+    name: "Login",
+    link: "/auth/login",
+    current: false,
+  },
+]
+export const userNavigation = [
+  {
+    name: "Home",
+    link: "/",
+    current: false,
+  },
+  {
+    name: "Service",
+    link: "/all-service",
+    current: false,
+  },
   {
     name: "User Dashboard",
     link: "/user-dashboard",
     current: false,
   },
+]
+
+export const adminNavigation = [
+  // {
+  //   name: "Dashboard",
+  //   link: "/dashboard",
+  //   current: false,
+  // },
+  // {
+  //   name: "User Dashboard",
+  //   link: "/user-dashboard",
+  //   current: false,
+  // },
   {
     name: "Service Management",
     link: null,
@@ -25,7 +67,7 @@ export const navigation = [
       },
       {
         name: "Services",
-        link: "/services",
+        link: "/all-service",
         current: false,
       },
       {

@@ -17,7 +17,7 @@ export const bookingApi = baseApi.injectEndpoints({
     }),
     getAllBooking: builder.query({
       query: () => ({
-        url: "/booking/all-bookings",
+        url: "/booking/all-booking",
         method: "GET",
       }),
       providesTags: ['Booking']

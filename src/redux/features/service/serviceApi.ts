@@ -13,7 +13,7 @@ export const serviceApi = baseApi.injectEndpoints({
       }),
       getAllServices: builder.query({
         query: (params) => ({
-          url: "/service/allServices",
+          url: "/service/all-service",
           method: "GET",
           params,
         }),

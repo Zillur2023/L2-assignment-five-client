@@ -3,7 +3,7 @@ import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { Input, Button } from "antd";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { useAppDispatch } from "../../redux/hooks";
-import { setUser } from "../../redux/features/auth/authSlice";
+import { setCountdown, setUser } from "../../redux/features/auth/authSlice";
 import { useLoginMutation } from "../../redux/features/auth/authApi";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -34,26 +34,41 @@ const Login: React.FC = () => {
   const from = (location.state as { from: string })?.from || "/";
 
   const onSubmit: SubmitHandler<FormValues> = async (formData) => {
-     toast.promise(
-      login(formData).unwrap(),
-      {
-        loading: "Logging in...",
-        success: ({data}) => {
-          const { token } = data;
-          const user:any = jwtDecode(token);
+    const toastId = toast.loading("Logging in...")
+    //  toast.promise(
+    //   login(formData).unwrap(),
+    //   {
+    //     loading: "Logging in...",
+    //     success: ({data}) => {
+    //       console.log({data})
+    //       const { token } = data;
+    //       const user:any = jwtDecode(token);
   
-          dispatch(setUser({ user, token }));
+    //       dispatch(setUser({ user, token }));
+    //       navigate(from, { replace: true });
   
-          // Navigate to the stored location or home page after login
-          navigate(from, { replace: true });
-  
-          return `${user?.email} has been logged in successfully!`;
-        },
+    //       return `${user?.email} has been logged in successfully!`;
+    //     },
         
-        error: "Error occurred while logging in",
-        // error: message,
-      }
-    );
+    //     error: "Error occurred while logging in",
+    //   }
+    // );
+  try {
+    const res = await login(formData).unwrap()
+    console.log({res})
+    if(res) {
+     const { token } = res.data;
+           const user:any = jwtDecode(token);
+           console.log({user})
+           dispatch(setUser({ user, token }));
+           navigate(from, { replace: true });
+     toast.success(res?.message, {id: toastId})
+    }
+    
+  } catch (error:any) {
+    console.log({error})
+    toast.error(error?.data?.message,{id: toastId} || "Something went wrong")
+  }
   };
   
 

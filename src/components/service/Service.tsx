@@ -14,7 +14,7 @@
 */
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { ChevronDownIcon, FunnelIcon } from "@heroicons/react/20/solid";
 import { Input, Pagination } from "antd";
@@ -57,6 +57,10 @@ export default function Service() {
 
   const { data, isLoading } = useGetAllServicesQuery(filter);
   console.log("useGetAllServicesQueryData", data);
+ 
+  useEffect(() => {
+    // This will automatically fetch new data when `filter` changes (Redux Toolkit will handle the data fetching).
+  }, [filter]);
 
   const handleFilterChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -111,6 +115,17 @@ export default function Service() {
       fields: "",
     });
   };
+
+   const handlePageChange = (page: number) => {
+    console.log({page})
+    setFilter((prevFilter) => ({
+      ...prevFilter,
+      page, // Update the page number
+    }));
+  };
+
+
+  
 
   return (
     <div className="bg-white">
@@ -222,7 +237,7 @@ export default function Service() {
                   ) : (
                     <div>
                       <h4 className="font-medium m-5">
-                        Total service {data?.data?.length || 0}
+                        {/* Total service {data?.data?.length || 0} */}
                       </h4>
                       <div className="flex justify-center items-center">
                         {data?.data?.length > 0 ? ( // Check if there are any products
@@ -243,10 +258,12 @@ export default function Service() {
                   )}
                 </div>
                 <Pagination
-                  align="end"
-                  defaultCurrent={9}
-                  total={data?.meta?.total}
-                />
+              current={data?.meta?.page } // The current page from state
+              pageSize={data?.meta?.limit} // The number of items per page (limit)
+              total={data?.meta?.total |0} // Total number of items (services)
+              onChange={handlePageChange} // Handle page change
+              showSizeChanger={false} // Remove if you want users to change page size
+            />
               </div>
             </div>
           </section>

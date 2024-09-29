@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Table, Card, Tag } from "antd";
 import moment from "moment";
 import { useGetMyBookingQuery } from "../../redux/features/booking/bookingApi";
-import { useAppSelector } from "../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { setCountdown } from "../../redux/features/auth/authSlice";
 
 // Define the Booking interface
 export interface Booking {
@@ -18,6 +19,8 @@ export interface Booking {
 }
 
 const UserBookingManagement: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const location = useLocation()
   const navigate = useNavigate();
   const { user } = useAppSelector((state: RootState) => state.auth);
   const { data: bookingData, isFetching } = useGetMyBookingQuery(user?.email, {
@@ -27,6 +30,10 @@ const UserBookingManagement: React.FC = () => {
   const [countdowns, setCountdowns] = useState<{ [key: string]: string }>({});
   const [upcomingBookings, setUpcomingBookings] = useState<Booking[]>([]);
   const [pastBookings, setPastBookings] = useState<Booking[]>([]);
+  console.log({countdowns})
+  console.log({pastBookings})
+  console.log({upcomingBookings})
+ 
 
   useEffect(() => {
     if (bookingData?.data) {
@@ -83,24 +90,26 @@ const UserBookingManagement: React.FC = () => {
     }
   }, [upcomingBookings]);
 
-  useEffect(() => {
-    if (upcomingBookings.length > 0 && countdowns[upcomingBookings[0]._id]) {
-      navigate('/user-dashboard', { state: { countdown: countdowns[upcomingBookings[0]._id] } });
-    }
-  }, [upcomingBookings, countdowns, navigate]);
+  // useEffect(() => {
+  //   if (upcomingBookings.length > 0 && countdowns[upcomingBookings[0]._id]) {
+  //     navigate('.', { state: { countdown: countdowns[upcomingBookings[0]._id] } });
+  //   }
+  // }, [upcomingBookings, countdowns, navigate]);
+  // useEffect(() => {
+  //   // Check if there are upcoming bookings and the corresponding countdown exists
+  //   if (upcomingBookings.length > 0) {
+  //     const bookingId = upcomingBookings[0]._id; // Get the ID of the first booking
+  //     const countdown = countdowns[bookingId]; // Get the countdown value from the countdowns object
+
+  //     // If the countdown value exists, dispatch the action
+  //     if (countdown !== undefined) {
+  //       dispatch(setCountdown(countdown));
+  //     }
+  //   }
+  // }, [upcomingBookings, countdowns, dispatch]);
+
 
   const columns: any = [
-    {
-      title: "User Email",
-      dataIndex: "user",
-      key: "email",
-      filters: bookingData?.data?.map((booking: Booking) => ({
-        text: booking.user.email,
-        value: booking.user.email,
-      })),
-      onFilter: (value: string, record: Booking) => record.user.email.includes(value),
-      render: (user: { _id: string; email: string }) => user.email,
-    },
     {
       title: "Service",
       dataIndex: "service",

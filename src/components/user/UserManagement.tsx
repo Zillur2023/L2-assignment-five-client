@@ -3,7 +3,7 @@ import { Table, Tag, Input } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import {
   useGetAllUserQuery,
-  useUpdateUserMutation,
+  useUpdateProfileMutation,
 } from "../../redux/user/userApi";
 import type { TableColumnsType, TableProps } from "antd";
 
@@ -18,7 +18,8 @@ interface UserData {
 
 const UserManagement: React.FC = () => {
   const { data: userData, isFetching, refetch } = useGetAllUserQuery("");
-  const [updateUser] = useUpdateUserMutation();
+  // const [updateUser] = useUpdateUserMutation();
+  const [updateUser] = useUpdateProfileMutation();
   const [searchText, setSearchText] = useState("");
   const [filteredUsers, setFilteredUsers] = useState<UserData[]>([]);
 

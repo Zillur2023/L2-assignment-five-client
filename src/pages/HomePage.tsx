@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Carousel, Divider } from "antd";
+import { Button, Carousel, Divider } from "antd";
 import Banner from "../components/banner/Banner";
 import ServiceDetails from "../components/service/ServiceDetails";
 import { useGetAllServicesQuery } from "../redux/features/service/serviceApi";
@@ -7,6 +7,7 @@ import { RightCircleFilled, LeftCircleFilled } from "@ant-design/icons";
 import WhyChooseUs from "../components/whyChooseUs/WhyChooseUs";
 import Review from "../components/review/Review";
 import Footer from "../components/footer/Footer";
+import { Link } from "react-router-dom";
 
 const contentStyle: React.CSSProperties = {
   margin: 0,
@@ -68,7 +69,8 @@ const HomePage = () => {
               <Divider />
               <div>
                 {data?.data?.length > 0 ? (
-                  <div className="relative">
+                  <div>
+                    <div className="relative">
                     <Carousel
                       arrows={true}
                       infinite={false}
@@ -99,6 +101,10 @@ const HomePage = () => {
                         )
                       )}
                     </Carousel>
+                  </div>
+                  <div className=" text-center my-5"> 
+                    <Link to="/all-service" ><Button className=" ">All Service</Button></Link>
+                  </div>
                   </div>
                 ) : (
                   <p className="text-center text-gray-500">

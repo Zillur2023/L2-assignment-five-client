@@ -5,7 +5,10 @@ import Meta from "antd/es/card/Meta";
 import { Dialog } from "@headlessui/react";
 import dayjs from "dayjs"; // For date formatting
 import { CloseOutlined } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { useAppSelector } from "../../redux/hooks";
+import { RootState } from "../../redux/store";
+import { authApi } from "../../redux/features/auth/authApi";
 
 type Slot = {
   _id: string;
@@ -21,6 +24,7 @@ type ServiceDetailsProps = {
     _id: string;
     name: string;
     description: string;
+    duration: string;
     price: number;
     image: string;
   } | null;
@@ -28,6 +32,8 @@ type ServiceDetailsProps = {
 };
 
 const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, page }) => {
+  const { user } = useAppSelector((state: RootState) => state.auth);
+  const location = useLocation();
   const { data: slotData } = useAvailableSlotQuery(service?._id, {
     skip: !service?._id,
   });
@@ -46,67 +52,74 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, page }) => {
   // const filteredSlots = slotData?.data?.filter((slot: Slot) =>
   //   selectedDate ? dayjs(slot.date).isSame(selectedDate, "day") : true
   // );
-  const filteredSlots = slotData?.data?.filter((slot: Slot) =>
-    selectedDate
-      ? dayjs(slot.date).isSame(selectedDate, "day")
-      : dayjs(slot.date).isSame(dayjs(), "day") // Compare with today's date
+  const filteredSlots = slotData?.data?.filter(
+    (slot: Slot) =>
+      selectedDate
+        ? dayjs(slot.date).isSame(selectedDate, "day")
+        : dayjs(slot.date).isSame(dayjs(), "day") // Compare with today's date
   );
 
   return (
     <>
-       {/* Conditionally render cards based on the page prop */}
-       {page === "homePage" && (        
-          <div className=" flex items-center justify-center" >
-            <div className=" text-center">
-              <img
-                alt={service?.name}
-                src={service?.image}
-                style={{ height: 200, width: "100%", objectFit: "contain" }}
-              /><br />
-              <h4 className=" text-xl sm:text-xl md:text-2xl font-semibold text-center"> {service?.name} </h4> <br />
-              <p className=" text-center"> {service?.description} </p>
-              <button
-            onClick={() => setOpen(true)}
-            className="mt-4 px-2 rounded-lg bg-gray-400 py-2 text-base font-semibold text-white hover:bg-gray-500"
-          >
-            View Details
-          </button>
-              
-            </div>
+      {/* Conditionally render cards based on the page prop */}
+      {page === "homePage" && (
+        <div className=" flex items-center justify-center">
+          <div className=" text-center">
+            <img
+              alt={service?.name}
+              src={service?.image}
+              style={{ height: 200, width: "100%", objectFit: "contain" }}
+            />
+            <br />
+            <h4 className=" text-xl sm:text-xl md:text-2xl font-semibold text-center">
+              {" "}
+              {service?.name}{" "}
+            </h4>{" "}
+            <br />
+            <p className=" text-center"> {service?.description} </p>
+            <button
+              onClick={() => setOpen(true)}
+              className="mt-4 px-2 rounded-lg bg-gray-400 py-2 text-base font-semibold text-white hover:bg-gray-500"
+            >
+              View Details
+            </button>
           </div>
-       
-      
-   )}
+        </div>
+      )}
 
       {page === "servicePage" && (
         <Card
-        hoverable
-        style={{ width: 240 }}
-        cover={
-          <img
-            alt={service?.name}
-            src={service?.image}
-            style={{ height: 200, width: "100%", objectFit: "contain" }}
-          />
-        }
-      >
-        <Meta
-          title={service?.name}
-          description={
-            <>
-              <p className=" text-black font-medium">{`$${service?.price.toFixed(2)}`}</p>
-              <p>{`${service?.description.slice(0, 75)}...`}</p>
-            </>
+          hoverable
+          style={{ width: 240 }}
+          cover={
+            <img
+              alt={service?.name}
+              src={service?.image}
+              style={{ height: 200, width: "100%", objectFit: "contain" }}
+            />
           }
-        />
-        <button
-          onClick={() => setOpen(true)}
-          className="mt-4 w-full rounded-lg bg-indigo-600 py-2 text-base font-semibold text-white hover:bg-indigo-700"
         >
-          View Details
-        </button>
-      </Card>
-      
+          <Meta
+            title={service?.name}
+            description={
+              <>
+                <p className=" text-green-500 text-sm font-medium">
+                  Price: {`$${service?.price.toFixed(2)}`}{" "}
+                </p>
+                <p className=" text-green-500 text-sm font-medium">
+                  Duration : {service?.duration} min{" "}
+                </p>
+                <p>{`${service?.description.slice(0, 75)}...`}</p>
+              </>
+            }
+          />
+          <button
+            onClick={() => setOpen(true)}
+            className="mt-4 w-full rounded-lg bg-indigo-600 py-2 text-base font-semibold text-white hover:bg-indigo-700"
+          >
+            View Details
+          </button>
+        </Card>
       )}
 
       {/* Dialog */}
@@ -127,18 +140,27 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, page }) => {
               />
 
               {/* Service Information */}
-              <h1 className="text-2xl font-bold">{service.name}</h1>
-              <p className="text-gray-600 mb-4">{service.description}</p>
-              <div className="text-lg font-semibold mb-6">
-                Price:{" "}
-                <span className="text-green-500">
-                  ${service.price.toFixed(2)}
-                </span>
+              <img
+                alt={service?.name}
+                src={service?.image}
+                style={{ height: 200, width: "100%", objectFit: "contain" }}
+              />
+              <div className="text-center">
+                <h1 className="text-lg font-medium text-gray-800">
+                  {service.name}
+                </h1>
+                <p className="text-sm font-medium text-green-500 mt-2">
+                  Price: {`$${service?.price.toFixed(2)}`}
+                </p>
+                <p className="text-sm font-medium text-green-500 ">
+                  Duration: {service?.duration} min
+                </p>
+                <p className="text-gray-600 mt-1">{service.description}</p>
               </div>
 
               {/* Selected Date */}
               <div className="mb-6">
-                <h2 className="text-lg font-semibold mb-2">Select Date</h2>
+                <h2 className="text-lg font-medium mb-2">Select Date</h2>
                 <div className="border border-gray-300 rounded-md p-3">
                   {selectedDate ? (
                     <div className="flex items-center justify-between">
@@ -182,7 +204,7 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, page }) => {
 
               {/* Available Slots */}
               <div className="mb-6">
-                <h2 className="text-lg font-semibold mb-2">Available Slots</h2>
+                <h2 className="text-lg font-medium mb-2">Available Slots</h2>
                 {filteredSlots?.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
                     {filteredSlots.map((slot: Slot) => (
@@ -207,17 +229,24 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, page }) => {
                 )}
               </div>
 
-              {/* Book Button */}
-              {selectedSlot && (
-                <Link to="/booking" state={{ service, selectedSlot }}>
-                  <button
-                    className="w-full bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
-                    // onClick={handleBookService}
-                  >
-                    Book This Service
-                  </button>
-                </Link>
-              )}
+             <div className=" my-5">
+               {/* Book Button */}
+               {selectedSlot ? (
+      user?.role === "user" ? (
+        <Link to="/booking" state={{ service, selectedSlot }}>
+          <button className="w-full bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
+            Book This Service
+          </button>
+        </Link>
+      ) : (
+        <Link to="/auth/login" state={{ from: location }}>
+          <button className="w-full bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
+            Login to Book This Service
+          </button>
+        </Link>
+      )
+    ) : null}
+             </div>
             </>
           )}
         </div>
