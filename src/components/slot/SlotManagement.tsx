@@ -115,7 +115,6 @@ const SlotManagement: React.FC = () => {
   ];
 
   const onChange: TableProps<SlotData>['onChange'] = (pagination, filters, sorter, extra) => {
-    console.log('params', pagination, filters, sorter, extra);
   };
 
   return (

@@ -35,38 +35,18 @@ const Login: React.FC = () => {
 
   const onSubmit: SubmitHandler<FormValues> = async (formData) => {
     const toastId = toast.loading("Logging in...")
-    //  toast.promise(
-    //   login(formData).unwrap(),
-    //   {
-    //     loading: "Logging in...",
-    //     success: ({data}) => {
-    //       console.log({data})
-    //       const { token } = data;
-    //       const user:any = jwtDecode(token);
-  
-    //       dispatch(setUser({ user, token }));
-    //       navigate(from, { replace: true });
-  
-    //       return `${user?.email} has been logged in successfully!`;
-    //     },
-        
-    //     error: "Error occurred while logging in",
-    //   }
-    // );
+
   try {
     const res = await login(formData).unwrap()
-    console.log({res})
     if(res) {
      const { token } = res.data;
            const user:any = jwtDecode(token);
-           console.log({user})
            dispatch(setUser({ user, token }));
            navigate(from, { replace: true });
      toast.success(res?.message, {id: toastId})
     }
     
   } catch (error:any) {
-    console.log({error})
     toast.error(error?.data?.message,{id: toastId} || "Something went wrong")
   }
   };

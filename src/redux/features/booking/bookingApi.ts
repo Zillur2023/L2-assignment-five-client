@@ -5,8 +5,6 @@ export const bookingApi = baseApi.injectEndpoints({
     createBooking: builder.mutation({
       query: (bookingData) => {
         // Log bookingData for debugging
-        console.log({ bookingData });
-
         return {
           url: "/booking/create",
           method: "POST",

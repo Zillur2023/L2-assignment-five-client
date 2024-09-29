@@ -11,13 +11,11 @@ import { createSlice } from '@reduxjs/toolkit';
 type TAuthState = {
   user: null | any;
   token: null | string;
-  // countdown: null | any;
 };
 
 const initialState: TAuthState = {
   user: null,
   token: null,
-  // countdown:null,
 };
 
 const authSlice = createSlice({
@@ -32,16 +30,11 @@ const authSlice = createSlice({
     logout: (state) => {
       state.user = null;
       state.token = null;
-      // state.countdown = null; // Reset countdown on logout
     },
-    // setCountdown: (state, action: PayloadAction<any | null>) => {
-    //   console.log(action)
-    //   state.countdown = action.payload; // Set countdown value
-    // },
+   
   },
 });
 
-// export const { setUser, logout, setCountdown } = authSlice.actions;
 export const { setUser, logout } = authSlice.actions;
 
 export default authSlice.reducer;

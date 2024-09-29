@@ -17,7 +17,7 @@ function DesktopMenu({ navigation }: { navigation: any[] }) {
     <div className="hidden sm:block sm:ml-6">
       <div className="flex space-x-4">
         {navigation.map((item) => (
-          <div key={item.name} className="relative">
+          <div key={item.name} className="relative mt-2">
             {item.link ? (
               <Link
                 to={item.link}
@@ -155,17 +155,7 @@ export default function Navbar() {
             {/* Countdown and Profile Section */}
             <div className="flex items-center">
               {/* Countdown Timer */}
-              {/* <nav className="bg-gray-800 text-white px-3 py-2 rounded-md">
-                <div className="flex items-center">
-                  {user && (countdown ? (
-                   <Tooltip title="Upcoming Booking Countdown" placement="bottom">
-                   <div className="flex items-center bg-red-600 px-3 py-1 rounded-md shadow-md cursor-pointer">
-                     <span className="text-lg font-semibold">{countdown}</span>
-                   </div>
-                 </Tooltip>
-                  ) : '')}
-                </div>
-              </nav> */}
+            
               <Countdown/>
   
               {/* Profile Dropdown */}

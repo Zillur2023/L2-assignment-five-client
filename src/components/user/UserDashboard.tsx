@@ -7,11 +7,13 @@ import { RootState } from "../../redux/store";
 import { useLocation, useNavigate } from "react-router-dom";
 import { setCountdown } from "../../redux/features/auth/authSlice";
 
+const { Meta } = Card;
+
 // Define the Booking interface
 export interface Booking {
   _id: string;
   user: { _id: string; email: string };
-  service: { _id: string; name: string; image: string };
+  service: { _id: string; name: string; image: string, price: string };
   slot: { _id: string; date: string; startTime: string; endTime: string };
   totalPrice: number;
   status: 'Pending' | 'Paid' | 'Shipped' | 'Completed' | 'Cancelled';
@@ -19,9 +21,6 @@ export interface Booking {
 }
 
 const UserBookingManagement: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const location = useLocation()
-  const navigate = useNavigate();
   const { user } = useAppSelector((state: RootState) => state.auth);
   const { data: bookingData, isFetching } = useGetMyBookingQuery(user?.email, {
     skip: !user?.email,
@@ -30,9 +29,6 @@ const UserBookingManagement: React.FC = () => {
   const [countdowns, setCountdowns] = useState<{ [key: string]: string }>({});
   const [upcomingBookings, setUpcomingBookings] = useState<Booking[]>([]);
   const [pastBookings, setPastBookings] = useState<Booking[]>([]);
-  console.log({countdowns})
-  console.log({pastBookings})
-  console.log({upcomingBookings})
  
 
   useEffect(() => {
@@ -90,23 +86,7 @@ const UserBookingManagement: React.FC = () => {
     }
   }, [upcomingBookings]);
 
-  // useEffect(() => {
-  //   if (upcomingBookings.length > 0 && countdowns[upcomingBookings[0]._id]) {
-  //     navigate('.', { state: { countdown: countdowns[upcomingBookings[0]._id] } });
-  //   }
-  // }, [upcomingBookings, countdowns, navigate]);
-  // useEffect(() => {
-  //   // Check if there are upcoming bookings and the corresponding countdown exists
-  //   if (upcomingBookings.length > 0) {
-  //     const bookingId = upcomingBookings[0]._id; // Get the ID of the first booking
-  //     const countdown = countdowns[bookingId]; // Get the countdown value from the countdowns object
 
-  //     // If the countdown value exists, dispatch the action
-  //     if (countdown !== undefined) {
-  //       dispatch(setCountdown(countdown));
-  //     }
-  //   }
-  // }, [upcomingBookings, countdowns, dispatch]);
 
 
   const columns: any = [
@@ -189,23 +169,67 @@ const UserBookingManagement: React.FC = () => {
   return (
     <div>
       <div className="flex justify-center items-center py-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
-          {upcomingBookings.map((booking) => (
-            <Card
-              key={booking._id}
-              title={booking.service.name}
-              className="w-full"
-              hoverable
-            >
-              <p>
-                Slot: {moment(booking.slot.date).format("YYYY-MM-DD")} (
-                {booking.slot.startTime} - {booking.slot.endTime})
-              </p>
-              <p className="">
-                Time Remaining: <Tag color="red">{countdowns[booking._id] || "Expired"}</Tag>
-              </p>
-            </Card>
-          ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-10">
+        {upcomingBookings.map((booking) => (
+  <Card
+    key={booking._id}
+    style={{ width: 270 }}
+    hoverable
+    cover={
+      <img
+        alt={booking.service.name}
+        src={booking.service.image}
+        style={{ height: 200, width: "100%", objectFit: "none" }}
+      />
+    }
+  >
+    <Meta
+      title={
+        <h3 className="text-xl font-semibold text-gray-800">
+          {booking.service.name}
+        </h3>
+      }
+      description={
+        <div className="space-y-3">
+          <p className="text-gray-800 font-medium">
+            Price: <span className="text-green-600">{`$${booking.service.price}`}</span>
+          </p>
+          <p className="text-gray-800 font-medium">
+            Slot:{" "}
+            <span className="text-green-600">
+              {moment(booking.slot.date).format("YYYY-MM-DD")} (
+              {booking.slot.startTime} - {booking.slot.endTime})
+            </span>
+          </p>
+            <p className="text-gray-800 font-medium flex items-center">
+              Time Remaining:{" "}
+              <Tag
+                color="red" 
+                className="ml-2"
+              >
+                {countdowns[booking._id] || "Expired"}
+              </Tag>
+            </p>
+            <p className="text-gray-800 font-medium flex items-center">
+              Payment Status:{" "}
+              <Tag
+                color={
+                  booking.paymentStatus === "Paid"
+                    ? "green"
+                    : booking.paymentStatus === "Failed"
+                    ? "red"
+                    : "blue"
+                }
+                className="ml-2"
+              >
+                {booking.paymentStatus}
+              </Tag>
+            </p>
+        </div>
+      }
+    />
+  </Card>
+))}
         </div>
       </div>
 

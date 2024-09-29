@@ -7,9 +7,7 @@ const { Title } = Typography;
 
 const Price: React.FC<TPriceProps> = ({ filter, setFilter }) => {
   const { data } = useMaxPriceQuery("");
-console.log({data})
   const [maxPrice, setMaxPrice] = useState(100);
-  console.log({maxPrice})
 
 
   // Derive maxPrice from the fetched data

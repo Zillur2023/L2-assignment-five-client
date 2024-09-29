@@ -3,7 +3,6 @@ import { useGetAllWhyChooseUsQuery } from "../../redux/features/whyChooseUs/whyC
 
 const WhyChooseUs = () => {
   const { data } = useGetAllWhyChooseUsQuery("");
-  // console.log({ data });
 
   return (
     <div className=" my-10">

@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import  { useEffect, useState } from 'react'
+import {  useAppSelector } from '../../redux/hooks';
 import { useGetMyBookingQuery } from '../../redux/features/booking/bookingApi';
 import { RootState } from '../../redux/store';
 import moment from 'moment';
-import { Tag } from 'antd';
+import {  Tooltip } from 'antd';
+import { Link } from 'react-router-dom';
 
 export interface Booking {
     _id: string;
@@ -25,10 +26,6 @@ const Countdown = () => {
     const [countdowns, setCountdowns] = useState<{ [key: string]: string }>({});
     const [upcomingBookings, setUpcomingBookings] = useState<Booking[]>([]);
     const [pastBookings, setPastBookings] = useState<Booking[]>([]);
-    console.log({countdowns})
-    console.log({pastBookings})
-    console.log({upcomingBookings})
-    // console.log("coundowns----->",countdowns[upcomingBookings[0]] )
    
   
     useEffect(() => {
@@ -77,7 +74,7 @@ const Countdown = () => {
           return acc;
         }, {} as { [key: string]: string });
   
-        // setCountdowns(newCountdowns);
+        setCountdowns(newCountdowns);
       };
   
       if (upcomingBookings.length > 0) {
@@ -86,35 +83,28 @@ const Countdown = () => {
       }
     }, [upcomingBookings]);
 
-    // useEffect(() => {
-    //   // Check if there are upcoming bookings and the corresponding countdown exists
-    //   if (upcomingBookings.length > 0) {
-    //     const bookingId = upcomingBookings[0]._id; // Get the ID of the first booking
-    //     const countdown = countdowns[bookingId]; // Get the countdown value from the countdowns object
-  
-    //     // If the countdown value exists, dispatch the action
-    //     // if (countdown !== undefined) {
-    //     //   dispatch(setCountdown(countdown));
-    //     // }
-    //     setCountdowns({time:countdown})
-    //   }
-    // }, [upcomingBookings, countdowns]);
-  
-   
  
 
   return (
     <nav className="bg-gray-800 text-white px-3 py-2 rounded-md">
-      {/* <Tag color="red">{countdowns[upcomingBookings[0]._id] || "Expired"}</Tag> */}
-    {/* <div className="flex items-center">
-      {user && (countdowns ? (
-       <Tooltip title="Upcoming Booking Countdown" placement="bottom">
-       <div className="flex items-center bg-red-600 px-3 py-1 rounded-md shadow-md cursor-pointer">
-         <span className="text-lg font-semibold">{countdowns}</span>
-       </div>
-     </Tooltip>
-      ) : '')}
-    </div> */}
+    <div className="flex items-center">
+    {user && upcomingBookings && upcomingBookings.length > 0 ? (
+  upcomingBookings?.slice(0,1).map((booking) => (
+   <Link to="/user-dashboard" >
+    <div key={booking?.user?._id}>
+      <Tooltip title={`Upcoming Booking: ${upcomingBookings[0]?.service.name}`} placement="bottom">
+<div className="flex items-center bg-red-600 px-3 py-1 rounded-md shadow-md cursor-pointer">
+  <span className="text-lg font-semibold">{countdowns[booking._id] || "Upcoming booking"}</span>
+</div>
+</Tooltip>
+    </div>
+   </Link>
+  ))
+) : (
+  "" 
+)}
+
+    </div>
   </nav>
   )
 }

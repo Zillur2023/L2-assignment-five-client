@@ -45,7 +45,6 @@ const Booking = () => {
       service:service?._id,
       slot:selectedSlot?._id
     };
-    console.log({bookingData})
 
     try {
       const res = await createBooking(bookingData).unwrap();
@@ -78,7 +77,7 @@ const Booking = () => {
             <div className="ml-4 flex-1">
               <h3 className="text-lg font-semibold text-gray-800">{service.name}</h3>
               <p className="text-sm text-gray-500">{service.description}</p>
-              <p className="text-lg font-bold text-gray-900">${service.price.toFixed(2)}</p>
+              <p className=" font-medium text-gray-900">${service.price.toFixed(2)}</p>
               <p>
                 <span className="text-md font-bold text-gray-500">Service booked: </span>
                 <span className="text-sm font-medium text-gray-500">

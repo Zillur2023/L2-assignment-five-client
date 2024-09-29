@@ -108,7 +108,6 @@ const UserBookingManagement: React.FC = () => {
   })) || []; // Provide a default empty array if bookingData is undefined
 
   const onChange: TableProps<BookingData>['onChange'] = (pagination, filters, sorter, extra) => {
-    console.log('Table parameters', pagination, filters, sorter, extra);
   };
 
   return (

@@ -56,7 +56,6 @@ export default function Service() {
   });
 
   const { data, isLoading } = useGetAllServicesQuery(filter);
-  console.log("useGetAllServicesQueryData", data);
  
   useEffect(() => {
     // This will automatically fetch new data when `filter` changes (Redux Toolkit will handle the data fetching).
@@ -118,7 +117,6 @@ export default function Service() {
   };
 
    const handlePageChange = (page: number) => {
-    console.log({page})
     setFilter((prevFilter) => ({
       ...prevFilter,
       page, // Update the page number

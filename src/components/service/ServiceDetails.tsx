@@ -103,11 +103,17 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, page }) => {
             title={service?.name}
             description={
               <>
-                <p className=" text-green-500 text-sm font-medium">
-                  Price: {`$${service?.price.toFixed(2)}`}{" "}
+                <p className="text-gray-800 font-medium">
+                  Price :{" "}
+                  <span className="text-green-600">
+                    {`$${service?.price.toFixed(2)}`}{" "}
+                  </span>
                 </p>
-                <p className=" text-green-500 text-sm font-medium">
-                  Duration : {service?.duration} min{" "}
+                <p className="text-gray-800 font-medium">
+                  Duration :{"  "}
+                  <span className="text-green-600">
+                    {service?.duration} min{" "}
+                  </span>
                 </p>
                 <p>{`${service?.description.slice(0, 75)}...`}</p>
               </>
@@ -212,11 +218,14 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, page }) => {
                         disabled={slot.isBooked === "booked"}
                         key={slot._id}
                         onClick={() => handleSlotSelect(slot)}
-                        className={`px-4 py-2 rounded-md border ${
-                          selectedSlot?._id === slot._id
-                            ? "bg-indigo-600 text-white"
-                            : "bg-gray-100 text-gray-800 hover:bg-gray-200"
-                        }`}
+                        className={`px-4 py-2 rounded-md border 
+                          ${
+                            slot.isBooked === "booked"
+                              ? "bg-gray-300 text-gray-500 cursor-not-allowed" // Disabled button style
+                              : selectedSlot?._id === slot._id
+                              ? "bg-indigo-600 text-white" // Selected button style
+                              : "bg-gray-100 text-gray-800 hover:bg-gray-200" // Default button style
+                          }`}
                       >
                         {`${slot.startTime} - ${slot.endTime}`}
                       </button>
@@ -229,24 +238,24 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, page }) => {
                 )}
               </div>
 
-             <div className=" my-5">
-               {/* Book Button */}
-               {selectedSlot ? (
-      user?.role === "user" ? (
-        <Link to="/booking" state={{ service, selectedSlot }}>
-          <button className="w-full bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
-            Book This Service
-          </button>
-        </Link>
-      ) : (
-        <Link to="/auth/login" state={{ from: location }}>
-          <button className="w-full bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
-            Login to Book This Service
-          </button>
-        </Link>
-      )
-    ) : null}
-             </div>
+              <div className=" my-5">
+                {/* Book Button */}
+                {selectedSlot ? (
+                  user?.role === "user" ? (
+                    <Link to="/booking" state={{ service, selectedSlot }}>
+                      <button className="w-full bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
+                        Book This Service
+                      </button>
+                    </Link>
+                  ) : (
+                    <Link to="/auth/login" state={{ from: location }}>
+                      <button className="w-full bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
+                        Login to Book This Service
+                      </button>
+                    </Link>
+                  )
+                ) : null}
+              </div>
             </>
           )}
         </div>
