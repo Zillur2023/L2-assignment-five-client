@@ -1,5 +1,5 @@
-import { Link, useLocation } from "react-router-dom";
-import { Avatar, Space, Dropdown, Tooltip } from "antd";
+import { Link, } from "react-router-dom";
+import { Avatar, Space, Dropdown } from "antd";
 import { UserOutlined, DownOutlined } from "@ant-design/icons";
 import { Disclosure, DisclosureButton } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -7,7 +7,6 @@ import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
 import { adminNavigation, loginUserInfo, needUserInfo, publicNavigation, userNavigation } from "./constant";
-import { useState } from "react";
 import Countdown from "../user/Countdown";
 
 const classNames = (...classes: string[]) => classes.filter(Boolean).join(" ");
@@ -34,7 +33,7 @@ function DesktopMenu({ navigation }: { navigation: any[] }) {
                 overlay={
                   <div className="bg-gray-700 rounded-md shadow-lg">
                     <div className="py-2">
-                      {item.subMenu.map((subItem) => (
+                      {item.subMenu.map((subItem:any) => (
                         <Link
                           key={subItem.name}
                           to={subItem.link}
@@ -89,7 +88,7 @@ function MobileMenu({ navigation }: { navigation: any[] }) {
                 overlay={
                   <div className="bg-gray-700 rounded-md shadow-lg">
                     <div className="py-2">
-                      {item.subMenu.map((subItem) => (
+                      {item.subMenu.map((subItem:any) => (
                         <Disclosure.Button
                           key={subItem.name}
                           as={Link}

@@ -6,6 +6,7 @@ import {
   useUpdateServiceMutation,
 } from "../../redux/features/service/serviceApi";
 import type { ColumnsType } from "antd/es/table";
+import AddService from "./AddService";
 
 // Define the DataType interface for the services
 interface DataType {
@@ -26,6 +27,10 @@ const Servicemanagement: React.FC = () => {
   // State for modal visibility and the currently edited service
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [currentService, setCurrentService] = useState<DataType | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const showModal = () => setModalVisible(true);
+  const closeModal = () => setModalVisible(false);
 
   // Ant Design form hook
   const [form] = Form.useForm();
@@ -141,6 +146,10 @@ const Servicemanagement: React.FC = () => {
 
   return (
     <>
+    <Button type="primary" className=" text-center mb-3" onClick={showModal}>
+        Add service
+      </Button>
+      <AddService modalVisible={modalVisible} handleClose={closeModal} />
       <Table columns={columns} dataSource={data} loading={isFetching} />
 
       <Modal

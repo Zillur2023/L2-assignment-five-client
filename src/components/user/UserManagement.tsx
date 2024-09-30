@@ -5,7 +5,7 @@ import {
   useGetAllUserQuery,
   useUpdateProfileMutation,
 } from "../../redux/user/userApi";
-import type { TableColumnsType, TableProps } from "antd";
+import type { TableColumnsType } from "antd";
 
 interface UserData {
   _id: string;

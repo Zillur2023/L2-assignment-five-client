@@ -9,7 +9,6 @@ import {
 import { RootState } from "../store";
 import { logout, setUser } from "../features/auth/authSlice";
 import config from "../../config";
-import { toast } from "sonner";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: `${config.server_url}/api`,

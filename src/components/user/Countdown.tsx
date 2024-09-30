@@ -26,6 +26,7 @@ const Countdown = () => {
     const [countdowns, setCountdowns] = useState<{ [key: string]: string }>({});
     const [upcomingBookings, setUpcomingBookings] = useState<Booking[]>([]);
     const [pastBookings, setPastBookings] = useState<Booking[]>([]);
+    console.log({pastBookings})
    
   
     useEffect(() => {

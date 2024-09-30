@@ -3,7 +3,7 @@ import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { Input, Button } from "antd";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { useAppDispatch } from "../../redux/hooks";
-import { setCountdown, setUser } from "../../redux/features/auth/authSlice";
+import {  setUser } from "../../redux/features/auth/authSlice";
 import { useLoginMutation } from "../../redux/features/auth/authApi";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -47,7 +47,7 @@ const Login: React.FC = () => {
     }
     
   } catch (error:any) {
-    toast.error(error?.data?.message,{id: toastId} || "Something went wrong")
+    toast.error(error?.data?.message,{id: toastId})
   }
   };
   

@@ -7,8 +7,6 @@ import ServicePage from "../pages/ServicePage";
 import ProtectedRoute from "../components/layout/ProtectedRoute";
 import NotFoundPage from "../pages/NotFoundPage";
 import ServiceManagementPage from "../pages/ServiceManagementPage";
-import AddServicePage from "../pages/AddServicePage";
-import CreateSlotPage from "../pages/CreateSlotPage";
 import SlotManagementPage from "../pages/SlotManagementPage";
 import BookingPage from "../pages/BookingPage";
 import UserBookingManagementPage from "../pages/UserBookingManagementPage";
@@ -31,28 +29,11 @@ const router = createBrowserRouter([
         path: "all-service",
         element: <ServicePage />,
       },
-
-      {
-        path: "add-service",
-        element: (
-          <ProtectedRoute role="ADMIN">
-            <AddServicePage />
-          </ProtectedRoute>
-        ),
-      },
       {
         path: "service-management",
         element: (
           <ProtectedRoute role="ADMIN">
             <ServiceManagementPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "create-slot",
-        element: (
-          <ProtectedRoute role="ADMIN">
-            <CreateSlotPage />
           </ProtectedRoute>
         ),
       },
@@ -73,16 +54,16 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "booking",
-        element: <BookingPage />,
-      },
-      {
         path: "user-booking",
         element: (
-          <ProtectedRoute role="USER">
+          <ProtectedRoute role="ADMIN">
             <UserBookingManagementPage />
           </ProtectedRoute>
         ),
+      },
+      {
+        path: "booking",
+        element: <BookingPage />,
       },
       {
         path: "user-dashboard",
@@ -97,11 +78,11 @@ const router = createBrowserRouter([
         element: <AllReviewPage />,
       },
       {
-        path: "/login",
+        path: "login",
         element: <Login />,
       },
       {
-        path: "/register",
+        path: "register",
         element: <Register />,
       },
       {

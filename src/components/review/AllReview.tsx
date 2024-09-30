@@ -14,7 +14,7 @@ const AllReview: React.FC = () => {
       {reviewData?.data?.length ? (
         reviewData.data.map((review: Review ) => (
           <div key={review._id} className="mb-4 p-4 border rounded-lg bg-gray-100">
-            <p className="font-semibold">{review.user.email}</p>
+            <p className="font-semibold">{review?.user?.email}</p>
             <Rate disabled value={review.rating} className="text-yellow-400" />
             <p className="mt-2 text-gray-700">{review.feedback}</p>
           </div>

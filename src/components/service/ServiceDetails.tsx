@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Calendar, Card, Carousel } from "antd";
+import { Calendar, Card } from "antd";
 import { useAvailableSlotQuery } from "../../redux/features/slot/slotApi";
 import Meta from "antd/es/card/Meta";
 import { Dialog } from "@headlessui/react";
@@ -8,7 +8,6 @@ import { CloseOutlined } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
 import { useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
-import { authApi } from "../../redux/features/auth/authApi";
 
 type Slot = {
   _id: string;
@@ -251,7 +250,7 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, page }) => {
                   ) : (
                     <Link to="/login" state={{ from: location }}>
                       <button className="w-full bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
-                        Login to Book This Service
+                        Login as User to Book This Service
                       </button>
                     </Link>
                   )

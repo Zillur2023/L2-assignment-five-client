@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
-import { Form, Input, Button, Card, Typography, Select, TimePicker } from "antd";
+import { Form, Input, Button, Card, Typography, Select, TimePicker, Modal } from "antd";
 import { toast } from "sonner";
 import { useGetAllServicesQuery, useGetServiceQuery } from "../../redux/features/service/serviceApi";
 import { useCreateSlotMutation } from "../../redux/features/slot/slotApi";
-import { useNavigate } from "react-router-dom";
 import moment from "moment";
 
 const { Title } = Typography;
@@ -17,8 +16,13 @@ type FormValues = {
   endTime: string;
 };
 
-const CreateSlot: React.FC = () => {
-  const navigate = useNavigate();
+type CreateSlotModalProps = {
+  modalVisible: boolean;
+  handleClose: () => void;
+};
+
+const CreateSlot: React.FC<CreateSlotModalProps> = ({ modalVisible, handleClose }) => {
+  // const navigate = useNavigate();
   const [createSlot] = useCreateSlotMutation();
   const { data: services, isLoading } = useGetAllServicesQuery('');
   const [selectedService, setSelectedService] = useState<string>(''); 
@@ -89,8 +93,14 @@ const CreateSlot: React.FC = () => {
   };
 
   return (
+    <Modal
+    // title="Add New Slot"
+    visible={modalVisible}
+    onCancel={handleClose}
+    footer={null}
+  >
     <Card className="max-w-xl mx-auto mt-8 p-6 shadow-lg">
-      <Title level={3} className="text-center mb-6">Add New Slot</Title>
+      <Title level={3} className="text-center mb-6">Create slot</Title>
       <Form layout="vertical" onFinish={handleSubmit(onSubmit)} className="space-y-4">
         {/* Service Selection */}
         <Form.Item label="Service" validateStatus={errors.service ? "error" : ""} help={errors.service?.message} required>
@@ -168,11 +178,12 @@ const CreateSlot: React.FC = () => {
 
         <Form.Item>
           <Button type="primary" htmlType="submit" block>
-            Add Slot
+            Create slot
           </Button>
         </Form.Item>
       </Form>
     </Card>
+    </Modal>
   );
 };
 

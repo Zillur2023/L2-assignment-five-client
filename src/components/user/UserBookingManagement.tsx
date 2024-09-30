@@ -16,6 +16,7 @@ interface BookingData {
 
 const UserBookingManagement: React.FC = () => {
   const { data: bookingData, isFetching } = useGetAllBookingQuery('');
+  console.log({bookingData})
 
   // Table columns configuration with types
   const columns: any = [
@@ -37,7 +38,7 @@ const UserBookingManagement: React.FC = () => {
       key: "service",
       width: "15%",
       render: (service: { _id: string; name: string }) => service.name,
-      filters: Array.from(new Set(bookingData?.data?.map(booking => booking.service.name))).map(name => ({
+      filters: Array.from(new Set(bookingData?.data?.map((booking:any) => booking.service.name))).map(name => ({
         text: name,
         value: name,
       })),
@@ -108,6 +109,7 @@ const UserBookingManagement: React.FC = () => {
   })) || []; // Provide a default empty array if bookingData is undefined
 
   const onChange: TableProps<BookingData>['onChange'] = (pagination, filters, sorter, extra) => {
+    console.log(pagination, filters, sorter, extra)
   };
 
   return (

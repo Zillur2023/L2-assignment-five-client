@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Table, Tag } from "antd";
+import { Button, Table, Tag } from "antd";
 import type { TableColumnsType, TableProps } from "antd";
 import { useGetAllSlotsQuery, useUpdateSlotMutation } from "../../redux/features/slot/slotApi";
 import { useGetAllServicesQuery } from "../../redux/features/service/serviceApi";
+import CreateSlot from "./CreateSlot";
 
 interface SlotData {
   _id: string;
@@ -18,6 +19,10 @@ const SlotManagement: React.FC = () => {
   const { data: serviceData } = useGetAllServicesQuery("");
   const [slots, setSlots] = useState<SlotData[]>([]);
   const [updateSlot] = useUpdateSlotMutation();
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const showModal = () => setModalVisible(true);
+  const closeModal = () => setModalVisible(false);
 
   useEffect(() => {
     if (slotData?.data) {
@@ -115,10 +120,15 @@ const SlotManagement: React.FC = () => {
   ];
 
   const onChange: TableProps<SlotData>['onChange'] = (pagination, filters, sorter, extra) => {
+    console.log({pagination, filters, sorter, extra})
   };
 
   return (
     <>
+    <Button type="primary" className=" text-center mb-3" onClick={showModal}>
+        Create slot
+      </Button>
+      <CreateSlot modalVisible={modalVisible} handleClose={closeModal} />
       <Table
         columns={columns}
         dataSource={slots}

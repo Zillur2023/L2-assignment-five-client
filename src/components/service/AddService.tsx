@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
-import { Form, Input, Button, Upload, message, Card, Typography } from "antd";
+import { Form, Input, Button, Upload, message, Card, Typography, Modal } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { toast } from "sonner";
 import { RcFile } from "antd/es/upload";
@@ -18,7 +18,12 @@ type FormValues = {
   image?: UploadFile[];
 };
 
-const AddService: React.FC = () => {
+type AddServiceModalProps = {
+  modalVisible: boolean;
+  handleClose: () => void;
+};
+
+const AddService: React.FC<AddServiceModalProps> = ({ modalVisible, handleClose }) => {
   const [createService] = useCreateServiceMutation();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
 
@@ -72,23 +77,19 @@ const AddService: React.FC = () => {
           image: imageUrl,
         };
 
-        const toastId = toast.loading("Service creating...")
-       try {
-        const res = await createService(serviceData).unwrap()
+        const toastId = toast.loading("Service creating...");
+        try {
+          const res = await createService(serviceData).unwrap();
 
-          if(res) {
-            toast.success(res?.message, {id: toastId})
+          if (res) {
+            toast.success(res?.message, { id: toastId });
             reset();
             setFileList([]);
             clearErrors("image");
           }
-        
-       } catch (error:any) {
-        toast.error(error?.data?.message, {id: toastId})
-       }
-
-       
-       
+        } catch (error: any) {
+          toast.error(error?.data?.message, { id: toastId });
+        }
       } else {
         throw new Error("Image upload failed");
       }
@@ -126,15 +127,22 @@ const AddService: React.FC = () => {
       }
     },
     customRequest: ({ file, onSuccess }) => {
-      setFileList([{ ...(file as RcFile), status: 'done' }]);
+      setFileList([{ ...(file as RcFile), status: "done" }]);
       onSuccess?.(file);
     },
   };
 
   return (
+    <Modal
+    // title="Add New Service"
+    visible={modalVisible}
+    onCancel={handleClose}
+    footer={null}
+    destroyOnClose
+  >
     <Card className="max-w-xl mx-auto mt-8 p-6 shadow-lg">
       <Title level={3} className="text-center mb-6">
-        Add New Service
+        Add  service
       </Title>
       <Form
         layout="vertical"
@@ -277,12 +285,13 @@ const AddService: React.FC = () => {
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit" block>
-            Add Service
+          <Button type="primary"  htmlType="submit" block>
+            Add service
           </Button>
         </Form.Item>
       </Form>
     </Card>
+    </Modal>
   );
 };
 
