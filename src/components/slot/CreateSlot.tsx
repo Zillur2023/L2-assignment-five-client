@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { Form, Input, Button, Card, Typography, Select, TimePicker, Modal } from "antd";
 import { toast } from "sonner";
+import dayjs from 'dayjs';
 import { useGetAllServicesQuery, useGetServiceQuery } from "../../redux/features/service/serviceApi";
 import { useCreateSlotMutation } from "../../redux/features/slot/slotApi";
 import moment from "moment";
@@ -82,6 +83,9 @@ const CreateSlot: React.FC<CreateSlotModalProps> = ({ modalVisible, handleClose 
       const res = await createSlot(serviceData).unwrap();
       if (res) {
         toast.success(res?.message, { id: toastId });
+        setValue('startTime', '');  // Reset startTime
+        setValue('endTime', '');    // Reset endTime
+        setEndTimeOptions([]); 
         reset();
         // navigate('/');
       } else {
@@ -150,8 +154,9 @@ const CreateSlot: React.FC<CreateSlotModalProps> = ({ modalVisible, handleClose 
               <TimePicker
                 className=" w-full"
                 format={'HH:mm'}
+                value={field.value ? dayjs(field.value, "HH:mm") : null} // Use dayjs instead of moment
                 onChange={(time) => {
-                  field.onChange(time ? time.format("HH:mm") : "");
+                  field.onChange(time ? time.format("HH:mm") : null); // Set null if time is not selected
                 }}
               />
             )}

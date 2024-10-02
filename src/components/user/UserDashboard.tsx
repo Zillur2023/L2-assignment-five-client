@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Table, Card, Tag } from "antd";
+import { Table, Card, Tag, TableProps } from "antd";
 import moment from "moment";
 import { useGetMyBookingQuery } from "../../redux/features/booking/bookingApi";
-import {  useAppSelector } from "../../redux/hooks";
+import { useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
+import { ColumnsType } from 'antd/es/table';
 
 const { Meta } = Card;
 
@@ -11,7 +12,7 @@ const { Meta } = Card;
 export interface Booking {
   _id: string;
   user: { _id: string; email: string };
-  service: { _id: string; name: string; image: string, price: string };
+  service: { _id: string; name: string; image: string; price: string };
   slot: { _id: string; date: string; startTime: string; endTime: string };
   totalPrice: number;
   status: 'Pending' | 'Paid' | 'Shipped' | 'Completed' | 'Cancelled';
@@ -27,7 +28,6 @@ const UserBookingManagement: React.FC = () => {
   const [countdowns, setCountdowns] = useState<{ [key: string]: string }>({});
   const [upcomingBookings, setUpcomingBookings] = useState<Booking[]>([]);
   const [pastBookings, setPastBookings] = useState<Booking[]>([]);
- 
 
   useEffect(() => {
     if (bookingData?.data) {
@@ -84,41 +84,33 @@ const UserBookingManagement: React.FC = () => {
     }
   }, [upcomingBookings]);
 
-
-
-
-  const columns: any = [
+  const columns: ColumnsType<Booking> = [
     {
-      title: "Service",
-      dataIndex: "service",
-      key: "service",
-      filters: bookingData?.data?.map((booking: Booking) => ({
-        text: booking.service.name,
-        value: booking.service.name,
-      })),
-      onFilter: (value: string, record: Booking) => record.service.name.includes(value),
-      render: (service: { name: string }) => service.name,
+      title: "Service Name",
+      dataIndex: ['service', 'name'],
+      key: "serviceName",
+      render: (name) => name,
     },
     {
       title: "Service Image",
-      dataIndex: "service",
-      key: "image",
-      render: (service: { image: string }) => (
-        <img src={service.image} alt="Service" style={{ width: 50, height: 50 }} />
+      dataIndex: ['service', 'image'],
+      key: "serviceImage",
+      render: (image, record) => (
+        <img src={image} alt={record.service.name} style={{ width: 50, height: 50 }} />
       ),
     },
     {
       title: "Booking Date",
-      dataIndex: "slot",
-      key: "date",
-      render: (slot: { date: string }) => moment(slot.date).format("YYYY-MM-DD"),
-      sorter: (a: Booking, b: Booking) => moment(a.slot.date).unix() - moment(b.slot.date).unix(),
+      dataIndex: ['slot', 'date'],
+      key: "bookingDate",
+      render: (date) => moment(date).format('YYYY-MM-DD'),
+      sorter: (a, b) => moment(a.slot.date).unix() - moment(b.slot.date).unix(),
     },
     {
       title: "Booking Time",
       dataIndex: "slot",
       key: "time",
-      render: (slot: { startTime: string; endTime: string }) => (
+      render: (slot) => (
         <Tag>
           {slot.startTime} - {slot.endTime}
         </Tag>
@@ -128,8 +120,8 @@ const UserBookingManagement: React.FC = () => {
       title: "Total Price",
       dataIndex: "totalPrice",
       key: "totalPrice",
-      render: (totalPrice: number) => `$${totalPrice.toFixed(2)}`,
-      sorter: (a: Booking, b: Booking) => a.totalPrice - b.totalPrice,
+      render: (totalPrice) => `$${totalPrice.toFixed(2)}`,
+      sorter: (a, b) => a.totalPrice - b.totalPrice,
     },
     {
       title: "Payment Status",
@@ -140,13 +132,12 @@ const UserBookingManagement: React.FC = () => {
         { text: "Pending", value: "Pending" },
         { text: "Failed", value: "Failed" },
       ],
-      onFilter: (value: string, record: Booking) => record.paymentStatus === value,
-      render: (paymentStatus: "Pending" | "Paid" | "Failed") => (
+      onFilter: (value, record) => record.paymentStatus === value,
+      render: (paymentStatus) => (
         <Tag
           color={
-            paymentStatus === "Paid" ? "green" :
-            paymentStatus === "Failed" ? "red" :
-            "blue"
+            paymentStatus === 'Paid' ? 'green' :
+            paymentStatus === 'Failed' ? 'red' : 'blue'
           }
         >
           {paymentStatus}
@@ -155,83 +146,83 @@ const UserBookingManagement: React.FC = () => {
     },
   ];
 
-  const dataSource = pastBookings.map((booking) => ({
+  const dataSource = pastBookings.map((booking: Booking) => ({
     key: booking._id,
-    user: booking.user,
-    service: booking.service,
-    slot: booking.slot,
-    totalPrice: booking.totalPrice,
-    paymentStatus: booking.paymentStatus,
+    ...booking
   }));
+
+  const onChange: TableProps<Booking>["onChange"] = (
+    pagination,
+    filters,
+    sorter,
+    extra
+  ) => {
+    console.log({ pagination, filters, sorter, extra });
+  };
 
   return (
     <div>
       <div className="flex justify-center items-center py-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-10">
-        {upcomingBookings.map((booking) => (
-  <Card
-    key={booking._id}
-    style={{ width: 280 }}
-    hoverable
-    cover={
-      <img
-        alt={booking.service.name}
-        src={booking.service.image}
-        style={{ height: 200, width: "100%", objectFit: "none" }}
-      />
-    }
-  >
-    <Meta
-      title={
-        <h3 className="text-xl font-semibold text-gray-800">
-          {booking.service.name}
-        </h3>
-      }
-      description={
-        <div className="space-y-3">
-          <p className="text-gray-800 font-medium">
-            Price: <span className="text-green-600">{`$${booking.service.price}`}</span>
-          </p>
-          <p className="text-gray-800 font-medium">
-            Booking:{" "}
-            <span className="text-green-600">
-              {moment(booking.slot.date).format("YYYY-MM-DD")}({booking.slot.startTime} - {booking.slot.endTime})
-            </span>
-            {/* <Tag>
-            {moment(booking.slot.date).format("YY-MM-DD")} - 
-            ( {booking.slot.startTime} - {booking.slot.endTime} )
-        </Tag> */}
-
-          </p>
-            <p className="text-gray-800 font-medium flex items-center">
-              Time Remaining:{" "}
-              <Tag
-                color="red" 
-                className="ml-2"
-              >
-                {countdowns[booking._id] || "Expired"}
-              </Tag>
-            </p>
-            <p className="text-gray-800 font-medium flex items-center">
-              Payment Status:{" "}
-              <Tag
-                color={
-                  booking.paymentStatus === "Paid"
-                    ? "green"
-                    : booking.paymentStatus === "Failed"
-                    ? "red"
-                    : "blue"
+          {upcomingBookings.map((booking) => (
+            <Card
+              key={booking._id}
+              style={{ width: 280 }}
+              hoverable
+              cover={
+                <img
+                  alt={booking.service.name}
+                  src={booking.service.image}
+                  style={{ height: 200, width: "100%", objectFit: "none" }}
+                />
+              }
+            >
+              <Meta
+                title={
+                  <h3 className="text-xl font-semibold text-gray-800">
+                    {booking.service.name}
+                  </h3>
                 }
-                className="ml-2"
-              >
-                {booking.paymentStatus}
-              </Tag>
-            </p>
-        </div>
-      }
-    />
-  </Card>
-))}
+                description={
+                  <div className="space-y-3">
+                    <p className="text-gray-800 font-medium">
+                      Price: <span className="text-green-600">{`$${booking.service.price}`}</span>
+                    </p>
+                    <p className="text-gray-800 font-medium">
+                      Booking:{" "}
+                      <span className="text-green-600">
+                        {moment(booking.slot.date).format("YYYY-MM-DD")}({booking.slot.startTime} - {booking.slot.endTime})
+                      </span>
+                    </p>
+                    <p className="text-gray-800 font-medium flex items-center">
+                      Time Remaining:{" "}
+                      <Tag
+                        color="red" 
+                        className="ml-2"
+                      >
+                        {countdowns[booking._id] || "Expired"}
+                      </Tag>
+                    </p>
+                    <p className="text-gray-800 font-medium flex items-center">
+                      Payment Status:{" "}
+                      <Tag
+                        color={
+                          booking.paymentStatus === "Paid"
+                            ? "green"
+                            : booking.paymentStatus === "Failed"
+                            ? "red"
+                            : "blue"
+                        }
+                        className="ml-2"
+                      >
+                        {booking.paymentStatus}
+                      </Tag>
+                    </p>
+                  </div>
+                }
+              />
+            </Card>
+          ))}
         </div>
       </div>
 
@@ -239,7 +230,9 @@ const UserBookingManagement: React.FC = () => {
         columns={columns}
         dataSource={dataSource}
         loading={isFetching}
-        rowKey={(record) => record.key}
+        rowKey={(record) => record._id}
+        pagination={{ pageSize: 10 }}
+        onChange={onChange}
       />
     </div>
   );

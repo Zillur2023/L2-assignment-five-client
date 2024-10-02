@@ -5,7 +5,7 @@ import {
   useGetAllUserQuery,
   useUpdateProfileMutation,
 } from "../../redux/user/userApi";
-import type { TableColumnsType } from "antd";
+import type { TableColumnsType, TableProps } from "antd";
 
 interface UserData {
   _id: string;
@@ -104,6 +104,15 @@ const UserManagement: React.FC = () => {
     },
   ];
 
+  const onChange: TableProps<UserData>["onChange"] = (
+    pagination,
+    filters,
+    sorter,
+    extra
+  ) => {
+    console.log({ pagination, filters, sorter, extra });
+  };
+
   return (
     <>
       <Input
@@ -118,6 +127,8 @@ const UserManagement: React.FC = () => {
         dataSource={filteredUsers}
         loading={isFetching}
         rowKey={(record) => record._id}
+        pagination={{ pageSize: 10 }}
+        onChange={onChange}
       />
     </>
   );

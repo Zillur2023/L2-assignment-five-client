@@ -1,126 +1,139 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Table, Tag } from "antd";
-import { useGetAllBookingQuery } from "../../redux/features/booking/bookingApi";
-import type { TableProps } from "antd";
+import type { TableColumnsType, TableProps } from "antd";
+import { useGetAllBookingQuery } from "../../redux/features/booking/bookingApi"; // Adjust the import based on your project structure
 
-// Define the interface for booking data
+// Define the BookingData interface
 interface BookingData {
   _id: string;
-  user: { _id: string; email: string }; // User data
-  service: { _id: string; name: string; image: string }; // Service data
-  slot: { _id: string; date: Date; startTime: string; endTime: string }; // Slot data
+  user: { _id: string; email: string };
+  service: { _id: string; name: string; image: string };
+  slot: { _id: string; date: Date; startTime: string; endTime: string };
   totalPrice: number;
-  status: 'Pending' | 'Paid' | 'Shipped' | 'Completed' | 'Cancelled'; // Booking status
-  paymentStatus: 'Pending' | 'Paid' | 'Failed'; // Payment status
+  status: "Pending" | "Paid" | "Shipped" | "Completed" | "Cancelled";
+  paymentStatus: "Pending" | "Paid" | "Failed";
 }
 
-const UserBookingManagement: React.FC = () => {
-  const { data: bookingData, isFetching } = useGetAllBookingQuery('');
-  console.log({bookingData})
+const BookingManagement: React.FC = () => {
+  const { data: bookingData, isFetching } = useGetAllBookingQuery("");
+  const [filteredBookings, setFilteredBookings] = useState<BookingData[]>([]);
 
-  // Table columns configuration with types
-  const columns: any = [
+  useEffect(() => {
+    if (bookingData?.data) {
+      setFilteredBookings(bookingData.data); // Initialize filtered bookings with fetched data
+    }
+  }, [bookingData]);
+
+  const columns: TableColumnsType<BookingData> = [
     {
       title: "User Email",
-      dataIndex: "user",
-      key: "email",
+      dataIndex: ["user", "email"],
+      key: "user.email",
+      filters: Array.from(
+        new Set(filteredBookings.map((booking) => booking.user.email))
+      ).map((email) => ({ text: email, value: email })),
+      onFilter: (value, record) => record.user.email.startsWith(value as string),
       width: "20%",
-      render: (user: { _id: string; email: string }) => user.email,
-      filters: Array.from(new Set(bookingData?.data?.map((booking:BookingData) => booking.user.email))).map(email => ({
-        text: email,
-        value: email,
-      })),
-      onFilter: (value:any, record:BookingData) => record.user.email.startsWith(value as string),
     },
     {
-      title: "Service",
-      dataIndex: "service",
-      key: "service",
-      width: "15%",
-      render: (service: { _id: string; name: string }) => service.name,
-      filters: Array.from(new Set(bookingData?.data?.map((booking:any) => booking.service.name))).map(name => ({
-        text: name,
-        value: name,
-      })),
-      onFilter: (value:any, record:BookingData) => record.service.name.startsWith(value as string),
+      title: "Service Name",
+      dataIndex: ["service", "name"],
+      key: "service.name",
+      filters: Array.from(
+        new Set(filteredBookings.map((booking) => booking.service.name))
+      ).map((name) => ({ text: name, value: name })),
+      onFilter: (value, record) =>
+        record.service.name.startsWith(value as string),
+      sorter: (a, b) => a.service.name.localeCompare(b.service.name),
+      width: "20%",
     },
     {
       title: "Service Image",
-      dataIndex: "service",
-      key: "image",
-      width: "10%",
-      render: (service: { image: string }) => (
-        <img src={service.image} alt="Service" style={{ width: 50, height: 50 }} />
+      dataIndex: ["service", "image"],
+      key: "service.image",
+      render: (_, record) => (
+        <img
+          src={record.service.image}
+          alt="Service"
+          style={{ width: 50, height: 50 }}
+        />
       ),
+      width: "10%",
     },
     {
       title: "Booking Date",
       dataIndex: "slot",
       key: "date",
+      render: (_, record) => new Date(record?.slot?.date).toLocaleDateString(),
+      sorter: (a, b) => new Date(a.slot.date).getTime() - new Date(b.slot.date).getTime(), // Sorting based on date
       width: "15%",
-      render: (slot: { date: Date }) => new Date(slot.date).toLocaleDateString(),
-      sorter: (a:BookingData, b:BookingData) => new Date(a.slot.date).getTime() - new Date(b.slot.date).getTime(),
     },
     {
       title: "Booking Time",
-      dataIndex: "slot",
-      key: "startTime",
-      width: "15%",
-      render: (slot: { startTime: string; endTime: string }) => (
+      dataIndex: ["slot", "startTime"],
+      key: "slot.startTime",
+      render: (_, record) => (
         <Tag>
-          {slot.startTime} - {slot.endTime}
+          {record?.slot?.startTime} - {record?.slot?.endTime}
         </Tag>
       ),
+      width: "15%",
     },
     {
       title: "Total Price",
       dataIndex: "totalPrice",
       key: "totalPrice",
+      render: (price: number) => `$${price.toFixed(2)}`,
+      sorter: (a, b) => a.totalPrice - b.totalPrice,
       width: "10%",
-      render: (totalPrice: number) => `$${totalPrice.toFixed(2)}`,
-      sorter: (a:BookingData, b:BookingData) => a.totalPrice - b.totalPrice,
     },
     {
       title: "Payment Status",
       dataIndex: "paymentStatus",
       key: "paymentStatus",
-      width: "15%",
-      render: (paymentStatus: 'Pending' | 'Paid' | 'Failed') => (
-        <Tag color={paymentStatus === 'Paid' ? 'green' : paymentStatus === 'Failed' ? 'red' : 'blue'}>
-          {paymentStatus}
+      render: (_, record) => (
+        <Tag
+          color={
+            record.paymentStatus === "Paid"
+              ? "green"
+              : record.paymentStatus === "Failed"
+              ? "red"
+              : "orange"
+          }
+        >
+          {record.paymentStatus}
         </Tag>
       ),
       filters: [
-        { text: 'Pending', value: 'Pending' },
-        { text: 'Paid', value: 'Paid' },
-        { text: 'Failed', value: 'Failed' },
+        { text: "Pending", value: "Pending" },
+        { text: "Paid", value: "Paid" },
+        { text: "Failed", value: "Failed" },
       ],
-      onFilter: (value:any, record:BookingData) => record.paymentStatus === value,
-    },
+      onFilter: (value, record) => record.paymentStatus === value,
+      width: "10%",
+    }
+    
   ];
 
-  const dataSource = bookingData?.data?.map((booking: BookingData) => ({
-    key: booking._id,
-    user: booking.user,
-    service: booking.service,
-    slot: booking.slot,
-    totalPrice: booking.totalPrice,
-    paymentStatus: booking.paymentStatus,
-  })) || []; // Provide a default empty array if bookingData is undefined
-
-  const onChange: TableProps<BookingData>['onChange'] = (pagination, filters, sorter, extra) => {
-    console.log(pagination, filters, sorter, extra)
+  const onChange: TableProps<BookingData>["onChange"] = (
+    pagination,
+    filters,
+    sorter,
+    extra
+  ) => {
+    console.log({ pagination, filters, sorter, extra });
   };
 
   return (
     <Table
       columns={columns}
-      dataSource={dataSource}
+      dataSource={filteredBookings}
       loading={isFetching}
-      onChange={onChange}
       rowKey={(record) => record._id}
+      pagination={{ pageSize: 10 }}
+      onChange={onChange}
     />
   );
 };
 
-export default UserBookingManagement;
+export default BookingManagement;

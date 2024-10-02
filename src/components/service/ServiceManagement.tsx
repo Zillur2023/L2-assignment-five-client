@@ -5,26 +5,24 @@ import {
   useGetAllServicesQuery,
   useUpdateServiceMutation,
 } from "../../redux/features/service/serviceApi";
-import type { ColumnsType } from "antd/es/table";
+import type { ColumnsType, TableProps } from "antd/es/table";
 import AddService from "./AddService";
 
-// Define the DataType interface for the services
 interface DataType {
   _id: string;
   name: string;
+  image: string;
   description: string;
   price: number;
   duration: number;
 }
 
-// Main ServiceManagement component
 const Servicemanagement: React.FC = () => {
-  // Fetch service data and set up mutation hooks
   const { data: serviceData, isFetching } = useGetAllServicesQuery("");
+  console.log(serviceData?.data)
   const [deleteService] = useDeleteServiceMutation();
   const [updateService] = useUpdateServiceMutation();
 
-  // State for modal visibility and the currently edited service
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [currentService, setCurrentService] = useState<DataType | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -32,17 +30,14 @@ const Servicemanagement: React.FC = () => {
   const showModal = () => setModalVisible(true);
   const closeModal = () => setModalVisible(false);
 
-  // Ant Design form hook
   const [form] = Form.useForm();
 
-  // Handle edit action by opening the modal and setting form fields
   const handleEdit = (service: DataType) => {
     setCurrentService(service);
     form.setFieldsValue(service);
     setIsModalVisible(true);
   };
 
-  // Handle delete action with a confirmation prompt
   const handleDelete = async (service: DataType) => {
     try {
       await deleteService(service._id).unwrap();
@@ -53,7 +48,6 @@ const Servicemanagement: React.FC = () => {
     }
   };
 
-  // Show confirmation modal for deletion
   const handleDeleteClick = (service: DataType) => {
     Modal.confirm({
       title: (
@@ -69,14 +63,12 @@ const Servicemanagement: React.FC = () => {
     });
   };
 
-  // Cancel the modal and reset form
   const handleCancel = () => {
     setIsModalVisible(false);
     form.resetFields();
     setCurrentService(null);
   };
 
-  // Handle form submission and update the service
   const onFinish = async (values: Omit<DataType, "_id">) => {
     if (currentService) {
       try {
@@ -90,8 +82,8 @@ const Servicemanagement: React.FC = () => {
     }
   };
 
-  // Table column definitions with types
   const columns: ColumnsType<DataType> = [
+   
     {
       title: "Name",
       dataIndex: "name",
@@ -101,9 +93,16 @@ const Servicemanagement: React.FC = () => {
       })),
       filterMode: "tree",
       filterSearch: true,
-      onFilter: (value: any, record: DataType) =>
-        record.name.startsWith(value as string),
-      width: "30%",
+      onFilter: (value: any, record: DataType) => record.name.startsWith(value as string),
+      width: "20%",
+    },
+    {
+      title: "Image",
+      dataIndex: "image",
+      render: (image: string) => (
+        <img src={image} alt="service" style={{ width: 50, height: 50 }} />
+      ),
+      width: "10%",
     },
     {
       title: "Description",
@@ -114,13 +113,13 @@ const Servicemanagement: React.FC = () => {
       title: "Price",
       dataIndex: "price",
       sorter: (a: DataType, b: DataType) => a.price - b.price,
-      width: "15%",
+      width: "10%",
     },
     {
       title: "Duration (minutes)",
       dataIndex: "duration",
       sorter: (a: DataType, b: DataType) => a.duration - b.duration,
-      width: "15%",
+      width: "10%",
     },
     {
       title: "Action",
@@ -135,22 +134,33 @@ const Servicemanagement: React.FC = () => {
           </Button>
         </Space>
       ),
+      width: "15%",
     },
   ];
 
-  // Data mapping for table
   const data = serviceData?.data?.map((service: DataType) => ({
     key: service._id,
     ...service,
   }));
 
+  // Handle table changes like pagination, filters, and sorting
+  const onChange: TableProps<DataType>['onChange'] = (pagination, filters, sorter, extra) => {
+    console.log({ pagination, filters, sorter, extra });
+  };
+
   return (
     <>
-    <Button type="primary" className=" text-center mb-3" onClick={showModal}>
+      <Button type="primary" className="text-center mb-3" onClick={showModal}>
         Add service
       </Button>
       <AddService modalVisible={modalVisible} handleClose={closeModal} />
-      <Table columns={columns} dataSource={data} loading={isFetching} />
+      <Table
+        columns={columns}
+        dataSource={data}
+        loading={isFetching}
+        onChange={onChange} // Handle pagination, filters, and sorting
+        pagination={{pageSize: 10}}
+      />
 
       <Modal
         title="Edit Service"
