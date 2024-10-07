@@ -167,8 +167,8 @@ const ProfileCard: React.FC = () => {
   rules={{
     required: 'Phone number is required',
     pattern: {
-      value: /^[0-9]{10}$/,
-      message: 'Enter a valid 10-digit phone number',
+      value: /^[0-9]{11}$/, // This allows only 11 digits
+      message: 'Phone number must be an 11-digit number',
     },
   }}
   render={({ field, fieldState: { error } }) => (

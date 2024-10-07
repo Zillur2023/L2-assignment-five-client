@@ -21,8 +21,8 @@ const Login: React.FC = () => {
     formState: { errors },
   } = useForm<FormValues>({
     defaultValues: {
-      email: "zillur@gmail.com",
-      password: "1234",
+      // email: "zillur@gmail.com",
+      // password: "1234",
     },
   });
   const navigate = useNavigate();
